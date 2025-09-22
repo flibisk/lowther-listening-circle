@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body {
+  height: 100%;
+}
+
+.prose h1,h2,h3,h4 { @apply font-heading text-brand-dark; }
+
+/* HV Muse font styles */
+.font-heading { font-family: var(--font-hvmuse); }
+.font-heading.italic { font-style: italic; }
