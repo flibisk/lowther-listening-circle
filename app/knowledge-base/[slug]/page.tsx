@@ -2,8 +2,9 @@
 import { notFound } from 'next/navigation'
 import Markdown from 'react-markdown'
 
-export default async function Article({ params }: { params: { slug: string }}) {
-  // const article = await prisma.article.findUnique({ where: { slug: params.slug } })
+export default async function Article({ params }: { params: Promise<{ slug: string }>}) {
+  const { slug } = await params
+  // const article = await prisma.article.findUnique({ where: { slug } })
   // if (!article) return notFound()
   
   // Temporary placeholder
