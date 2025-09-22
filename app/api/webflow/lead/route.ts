@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { webflowLeadSchema } from "@/lib/schemas"
 import { daysAgo, getClientIp, sha256 } from "@/lib/attribution"
-import { Prisma } from "@prisma/client"
+import { LeadAffSource } from "@prisma/client"
 
 function authorised(req: Request) {
   const auth = req.headers.get("authorization") || ""
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     if (recentClick?.userId) refUser = { id: recentClick.userId }
   }
 
-  let affSource: Prisma.LeadAffSource = "NONE"
+  let affSource: LeadAffSource = "NONE"
   if (input.ref && refUser) affSource = "FORM"
   else if (!input.ref && refUser) affSource = "LINK"
 
