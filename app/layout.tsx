@@ -5,8 +5,8 @@ import Link from 'next/link'
 
 const hvMuse = localFont({ 
   src: [
-    { path: './fonts/HV Muse.otf', style: 'normal' },
-    { path: './fonts/HV Muse Italic.otf', style: 'italic' }
+    { path: '../public/fonts/HV Muse.otf', style: 'normal' },
+    { path: '../public/fonts/HV Muse Italic.otf', style: 'italic' }
   ], 
   variable: '--font-hvmuse', 
   display: 'swap' 
