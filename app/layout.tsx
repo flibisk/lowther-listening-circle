@@ -5,13 +5,18 @@ import Link from 'next/link'
 
 const hvMuse = localFont({ 
   src: [
-    { path: '/fonts/HVMuse.otf', style: 'normal' },
-    { path: '/fonts/HVMuse Italic.otf', style: 'italic' }
+    { path: './fonts/HV Muse.otf', style: 'normal' },
+    { path: './fonts/HV Muse Italic.otf', style: 'italic' }
   ], 
   variable: '--font-hvmuse', 
   display: 'swap' 
 })
-const sarabun = Sarabun({ subsets: ['latin'], variable: '--font-sarabun', display: 'swap' })
+const sarabun = Sarabun({ 
+  subsets: ['latin'], 
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sarabun', 
+  display: 'swap' 
+})
 
 export const metadata = { title: 'Lowther Listening Circle', description: 'Affiliate and knowledge base for Lowther' }
 

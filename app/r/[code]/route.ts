@@ -4,3 +4,4 @@ export async function GET(_: Request, { params }: { params: { code: string } }) 
   res.cookies.set('aff_id', params.code, { httpOnly: true, sameSite: 'lax', secure: true, path: '/' })
   return res
 }
+

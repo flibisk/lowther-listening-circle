@@ -11,3 +11,4 @@ export function daysAgo(n: number) {
   d.setDate(d.getDate() - n)
   return d
 }
+

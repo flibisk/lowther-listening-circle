@@ -84,3 +84,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ status: "ok", leadId: lead.id, referrer: lead.refCode ?? null, affSource: lead.affSource })
 }
+

@@ -15,3 +15,4 @@ export async function POST(req: Request) {
   res.headers.set('Set-Cookie', `aff_id=${ref}; Path=/; HttpOnly; SameSite=Lax; Secure`)
   return res
 }
+

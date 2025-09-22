@@ -22,3 +22,4 @@ async function main() {
   console.log('Seed complete', admin.email)
 }
 main().finally(()=>prisma.$disconnect())
+
