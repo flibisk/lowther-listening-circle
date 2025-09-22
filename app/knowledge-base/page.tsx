@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+// import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
 export default async function KB() {
-  const articles = await prisma.article.findMany({ orderBy: { createdAt: 'desc' } })
+  // const articles = await prisma.article.findMany({ orderBy: { createdAt: 'desc' } })
+  const articles: any[] = [] // Temporary placeholder
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
       <h1 className="font-heading text-4xl mb-6">Knowledge base</h1>
@@ -15,6 +16,9 @@ export default async function KB() {
           </li>
         ))}
       </ul>
+      {articles.length === 0 && (
+        <p className="text-brand-grey2">No articles yet. Database will be connected after deployment.</p>
+      )}
     </section>
   )
 }
