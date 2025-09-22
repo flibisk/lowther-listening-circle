@@ -7,11 +7,38 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Role { MEMBER ADMIN }
-enum Tier { ADVOCATE AMBASSADOR }
-enum AffSource { DISCOUNT CART_ATTR COOKIE NONE }
-enum LedgerStatus { PENDING APPROVED PAID CLAWED_BACK }
-enum LeadAffSource { DISCOUNT LINK FORM CART_ATTR MANUAL NONE }
+enum Role {
+  MEMBER
+  ADMIN
+}
+
+enum Tier {
+  ADVOCATE
+  AMBASSADOR
+}
+
+enum AffSource {
+  DISCOUNT
+  CART_ATTR
+  COOKIE
+  NONE
+}
+
+enum LedgerStatus {
+  PENDING
+  APPROVED
+  PAID
+  CLAWED_BACK
+}
+
+enum LeadAffSource {
+  DISCOUNT
+  LINK
+  FORM
+  CART_ATTR
+  MANUAL
+  NONE
+}
 
 model User {
   id            String   @id @default(cuid())
