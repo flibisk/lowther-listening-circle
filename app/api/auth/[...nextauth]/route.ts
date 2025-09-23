@@ -58,14 +58,14 @@ const handler = NextAuth({
         if (credentials.email === "peter@lowtherloudspeakers.com" && credentials.password === "warpwarp") {
           // Find or create admin user
           let user = await prisma.user.findUnique({
-            where: { email: "peter@lowtherloudspeakers.com" }
+            where: { email: "admin@lowtherlisteningcircle.com" }
           })
 
           if (!user) {
             // Create admin user if doesn't exist
             user = await prisma.user.create({
               data: {
-                email: "peter@lowtherloudspeakers.com",
+                email: "admin@lowtherlisteningcircle.com",
                 name: "Peter",
                 role: "ADMIN",
                 tier: "AMBASSADOR",
