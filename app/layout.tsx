@@ -29,9 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <header className="border-b border-brand-haze bg-brand-primary">
             <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-3">
-                <img src="https://cdn.prod.website-files.com/60642ec35aaa96134a87538a/612f6e6f1ede67731870e1f7_lowther-logo.svg" alt="Lowther" className="h-6" />
-                <span className="font-heading tracking-tight">Listening Circle</span>
+              <Link href="/" className="flex items-center gap-2">
+                <img src="https://cdn.prod.website-files.com/60642ec35aaa96134a87538a/612f6e6f1ede67731870e1f7_lowther-logo.svg" alt="Lowther" className="h-5" />
               </Link>
               <Navigation />
             </div>
