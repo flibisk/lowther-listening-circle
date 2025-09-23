@@ -50,18 +50,26 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        console.log('Credentials received:', { email: credentials?.email, password: credentials?.password ? '***' : 'missing' })
+        
         if (!credentials?.email || !credentials?.password) {
+          console.log('Missing credentials')
           return null
         }
 
         // Check for admin credentials
         if (credentials.email === "peter@lowtherloudspeakers.com" && credentials.password === "warpwarp") {
+          console.log('Admin credentials match, looking up user...')
+          
           // Find or create admin user
           let user = await prisma.user.findUnique({
             where: { email: "admin@lowtherlisteningcircle.com" }
           })
 
+          console.log('Found user:', user)
+
           if (!user) {
+            console.log('Creating new admin user...')
             // Create admin user if doesn't exist
             user = await prisma.user.create({
               data: {
@@ -75,12 +83,15 @@ const handler = NextAuth({
           } else {
             // Update existing user to admin if needed
             if (user.role !== "ADMIN") {
+              console.log('Updating user role to ADMIN...')
               user = await prisma.user.update({
                 where: { id: user.id },
                 data: { role: "ADMIN", tier: "AMBASSADOR" }
               })
             }
           }
+
+          console.log('Returning user:', { id: user.id, email: user.email, role: user.role })
 
           return {
             id: user.id,
@@ -93,6 +104,7 @@ const handler = NextAuth({
           }
         }
 
+        console.log('Credentials do not match admin credentials')
         return null
       }
     })

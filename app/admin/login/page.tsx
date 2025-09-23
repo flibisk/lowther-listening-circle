@@ -16,6 +16,8 @@ export default function AdminLogin() {
     setIsLoading(true)
     setError("")
 
+    console.log('Attempting to sign in with:', { email, password: '***' })
+
     try {
       const result = await signIn("credentials", {
         email,
@@ -23,12 +25,17 @@ export default function AdminLogin() {
         redirect: false,
       })
 
+      console.log('Sign in result:', result)
+
       if (result?.error) {
+        console.log('Sign in error:', result.error)
         setError("Invalid email or password")
       } else {
+        console.log('Sign in successful, redirecting...')
         router.push("/admin")
       }
     } catch (error) {
+      console.error('Sign in error:', error)
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
