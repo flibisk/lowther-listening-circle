@@ -44,7 +44,9 @@ export default function AdminDashboard() {
   const fetchUsers = async () => {
     try {
       console.log("Fetching users...")
-      const response = await fetch("/api/admin/users")
+      const response = await fetch("/api/admin/users", {
+        credentials: 'include'
+      })
       console.log("Response status:", response.status)
       console.log("Response ok:", response.ok)
       
@@ -80,7 +82,8 @@ export default function AdminDashboard() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ tier: newTier })
+        body: JSON.stringify({ tier: newTier }),
+        credentials: 'include'
       })
       if (response.ok) {
         fetchUsers() // Refresh the list
@@ -99,7 +102,8 @@ export default function AdminDashboard() {
     
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: 'include'
       })
       if (response.ok) {
         fetchUsers() // Refresh the list
