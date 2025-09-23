@@ -1,13 +1,23 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
-import { signIn } from "next-auth/react"
+import { useState, useEffect } from "react"
+import { signIn, useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard")
+    }
+  }, [status, router])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,6 +34,18 @@ export default function Home() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Show loading while checking authentication status
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-brand-dark via-brand-primary to-brand-haze flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-brand-gold border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-brand-grey2">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
