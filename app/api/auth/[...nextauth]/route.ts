@@ -61,9 +61,9 @@ export const authOptions = {
         if (credentials.email === "peter@lowtherloudspeakers.com" && credentials.password === "warpwarp") {
           console.log('Admin credentials match, looking up user...')
           
-          // Find or create admin user
+          // Find or create admin user using the actual admin email
           let user = await prisma.user.findUnique({
-            where: { email: "admin@lowtherlisteningcircle.com" }
+            where: { email: "peter@lowtherloudspeakers.com" }
           })
 
           console.log('Found user:', user)
@@ -73,20 +73,22 @@ export const authOptions = {
             // Create admin user if doesn't exist
             user = await prisma.user.create({
               data: {
-                email: "admin@lowtherlisteningcircle.com",
+                email: "peter@lowtherloudspeakers.com",
                 name: "Peter",
                 role: "ADMIN",
                 tier: "AMBASSADOR",
-                refCode: "LW-ADMIN"
+                refCode: "LW-PETER",
+                isApproved: true, // Admin user is auto-approved
+                approvedAt: new Date(),
               }
             })
           } else {
             // Update existing user to admin if needed
-            if (user.role !== "ADMIN") {
-              console.log('Updating user role to ADMIN...')
+            if (user.role !== "ADMIN" || !user.isApproved) {
+              console.log('Updating user role to ADMIN and approving...')
               user = await prisma.user.update({
                 where: { id: user.id },
-                data: { role: "ADMIN", tier: "AMBASSADOR" }
+                data: { role: "ADMIN", tier: "AMBASSADOR", isApproved: true, approvedAt: new Date(), refCode: "LW-PETER" }
               })
             }
           }
