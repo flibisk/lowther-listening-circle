@@ -53,6 +53,8 @@ const handler = NextAuth({
         session.user.id = user.id
         session.user.refCode = user.refCode
         session.user.discountCode = user.discountCode
+        session.user.role = user.role
+        session.user.tier = user.tier
       }
       return session
     },

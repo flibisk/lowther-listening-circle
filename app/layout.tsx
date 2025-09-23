@@ -32,10 +32,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <img src="https://cdn.prod.website-files.com/60642ec35aaa96134a87538a/612f6e6f1ede67731870e1f7_lowther-logo.svg" alt="Lowther" className="h-6" />
                 <span className="font-heading tracking-tight">Listening Circle</span>
               </Link>
-              <nav className="flex items-center gap-6 text-sm">
-                <Link href="/knowledge-base">Knowledge base</Link>
-                <Link href="/dashboard" className="px-4 py-2 rounded-2xl bg-brand-secondary text-white">Sign in</Link>
-              </nav>
+                     <nav className="flex items-center gap-6 text-sm">
+                       <Link href="/knowledge-base">Knowledge base</Link>
+                       <Link href="/dashboard" className="px-4 py-2 rounded-2xl bg-brand-secondary text-white">Sign in</Link>
+                       <Link href="/admin" className="px-4 py-2 rounded-2xl bg-red-600 text-white">Admin</Link>
+                     </nav>
             </div>
           </header>
           <main>{children}</main>
