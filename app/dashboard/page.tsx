@@ -76,12 +76,12 @@ export default function Dashboard() {
         <h1 className="font-heading text-3xl">Dashboard</h1>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-600">Welcome, {session.user?.email}</span>
-          <button
-            onClick={() => signOut()}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-          >
-            Sign Out
-          </button>
+                 <button
+                   onClick={() => signOut({ callbackUrl: '/login' })}
+                   className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                 >
+                   Sign Out
+                 </button>
         </div>
       </div>
 
