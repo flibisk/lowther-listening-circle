@@ -10,7 +10,7 @@ export async function GET(
     console.log('Debug Stats API called for user:', id)
     
     // Get user stats without authentication for debugging
-    const [clicks, orders, earnings, totalSalesResult] = await Promise.all([
+    const [clicks, orders, earnings, pendingEarnings, totalSalesResult] = await Promise.all([
       // Count clicks
       prisma.click.count({
         where: { userId: id }
@@ -19,11 +19,19 @@ export async function GET(
       prisma.order.count({
         where: { userId: id }
       }),
-      // Sum earnings from commission ledger
+      // Sum earnings from commission ledger (paid)
       prisma.commissionLedger.aggregate({
         where: { 
           userId: id,
-          status: { in: ['APPROVED', 'PAID'] }
+          status: 'PAID'
+        },
+        _sum: { amount: true }
+      }),
+      // Sum pending earnings from commission ledger
+      prisma.commissionLedger.aggregate({
+        where: { 
+          userId: id,
+          status: 'PENDING'
         },
         _sum: { amount: true }
       }),
@@ -35,14 +43,16 @@ export async function GET(
     ])
 
     const totalEarnings = earnings._sum.amount || 0
+    const pendingCommission = pendingEarnings._sum.amount || 0
     const totalSales = totalSalesResult._sum.subtotalNet || 0
 
-    console.log('Debug Stats for user', id, ':', { clicks, orders, earnings: Number(totalEarnings), totalSales: Number(totalSales) })
+    console.log('Debug Stats for user', id, ':', { clicks, orders, earnings: Number(totalEarnings), pendingCommission: Number(pendingCommission), totalSales: Number(totalSales) })
 
     return NextResponse.json({
       clicks,
       orders,
       earnings: Number(totalEarnings),
+      pendingCommission: Number(pendingCommission),
       totalSales: Number(totalSales)
     })
   } catch (error) {

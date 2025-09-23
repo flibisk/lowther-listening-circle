@@ -8,7 +8,7 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [copied, setCopied] = useState<string | null>(null)
-  const [stats, setStats] = useState({ clicks: 0, orders: 0, earnings: 0, totalSales: 0 })
+         const [stats, setStats] = useState({ clicks: 0, orders: 0, earnings: 0, pendingCommission: 0, totalSales: 0 })
   const [advocates, setAdvocates] = useState([])
 
   useEffect(() => {
@@ -137,25 +137,29 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid md:grid-cols-4 gap-6 mb-8">
-        <div className="p-6 border rounded-2xl">
-          <div className="text-sm text-brand-grey2">Clicks</div>
-          <div className="text-2xl font-heading">{stats.clicks || 0}</div>
-        </div>
-        <div className="p-6 border rounded-2xl">
-          <div className="text-sm text-brand-grey2">Orders</div>
-          <div className="text-2xl font-heading">{stats.orders || 0}</div>
-        </div>
-        <div className="p-6 border rounded-2xl">
-          <div className="text-sm text-brand-grey2">Total Sales</div>
-          <div className="text-2xl font-heading">£{(stats.totalSales || 0).toLocaleString()}</div>
-        </div>
-        <div className="p-6 border rounded-2xl">
-          <div className="text-sm text-brand-grey2">Earnings</div>
-          <div className="text-2xl font-heading">£{(stats.earnings || 0).toFixed(2)}</div>
-        </div>
-      </div>
+             {/* Stats Grid */}
+             <div className="grid md:grid-cols-5 gap-6 mb-8">
+               <div className="p-6 border rounded-2xl">
+                 <div className="text-sm text-brand-grey2">Clicks</div>
+                 <div className="text-2xl font-heading">{stats.clicks || 0}</div>
+               </div>
+               <div className="p-6 border rounded-2xl">
+                 <div className="text-sm text-brand-grey2">Orders</div>
+                 <div className="text-2xl font-heading">{stats.orders || 0}</div>
+               </div>
+               <div className="p-6 border rounded-2xl">
+                 <div className="text-sm text-brand-grey2">Total Sales</div>
+                 <div className="text-2xl font-heading">£{(stats.totalSales || 0).toLocaleString()}</div>
+               </div>
+               <div className="p-6 border rounded-2xl">
+                 <div className="text-sm text-brand-grey2">Earnings</div>
+                 <div className="text-2xl font-heading">£{(stats.earnings || 0).toFixed(2)}</div>
+               </div>
+               <div className="p-6 border rounded-2xl bg-orange-50">
+                 <div className="text-sm text-orange-600">Pending Commission</div>
+                 <div className="text-2xl font-heading text-orange-700">£{(stats.pendingCommission || 0).toFixed(2)}</div>
+               </div>
+             </div>
 
       {/* Referral Links Section */}
       <div className="bg-gray-50 rounded-2xl p-6 mb-8">

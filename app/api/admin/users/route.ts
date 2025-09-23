@@ -81,14 +81,12 @@ export async function GET(request: NextRequest) {
               subtotalNet: true
             }
           },
-          Ledger: {
-            where: {
-              status: { in: ['APPROVED', 'PAID'] }
-            },
-            select: {
-              amount: true
-            }
-          }
+                 Ledger: {
+                   select: {
+                     amount: true,
+                     status: true
+                   }
+                 }
         }
       })
 
@@ -96,27 +94,38 @@ export async function GET(request: NextRequest) {
       console.log("Number of raw users:", users.length)
 
       // Calculate stats for each user
-      const usersWithStats = users.map(user => ({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        fullName: user.fullName,
-        address: user.address,
-        location: user.location,
-        refCode: user.refCode,
-        discountCode: user.discountCode,
-        role: user.role,
-        tier: user.tier,
-        isApproved: user.isApproved,
-        approvedAt: user.approvedAt?.toISOString(),
-        approvedBy: user.approvedBy,
-        ambassadorId: user.ambassadorId,
-        createdAt: user.createdAt.toISOString(),
-        clicks: user.Clicks.length,
-        orders: user.Orders.length,
-        totalSales: user.Orders.reduce((sum, order) => sum + Number(order.subtotalNet), 0),
-        earnings: user.Ledger.reduce((sum, ledger) => sum + Number(ledger.amount), 0)
-      }))
+      const usersWithStats = users.map(user => {
+        const paidEarnings = user.Ledger
+          .filter(ledger => ledger.status === 'PAID')
+          .reduce((sum, ledger) => sum + Number(ledger.amount), 0)
+        
+        const pendingCommission = user.Ledger
+          .filter(ledger => ledger.status === 'PENDING')
+          .reduce((sum, ledger) => sum + Number(ledger.amount), 0)
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          fullName: user.fullName,
+          address: user.address,
+          location: user.location,
+          refCode: user.refCode,
+          discountCode: user.discountCode,
+          role: user.role,
+          tier: user.tier,
+          isApproved: user.isApproved,
+          approvedAt: user.approvedAt?.toISOString(),
+          approvedBy: user.approvedBy,
+          ambassadorId: user.ambassadorId,
+          createdAt: user.createdAt.toISOString(),
+          clicks: user.Clicks.length,
+          orders: user.Orders.length,
+          totalSales: user.Orders.reduce((sum, order) => sum + Number(order.subtotalNet), 0),
+          earnings: paidEarnings,
+          pendingCommission: pendingCommission
+        }
+      })
 
       console.log("Users with stats:", usersWithStats)
       console.log("Number of users returned:", usersWithStats.length)

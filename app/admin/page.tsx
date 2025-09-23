@@ -20,10 +20,11 @@ interface User {
   approvedBy?: string
   ambassadorId?: string
   createdAt: string
-  clicks: number
-  orders: number
-  earnings: number
-  totalSales: number
+         clicks: number
+         orders: number
+         earnings: number
+         pendingCommission: number
+         totalSales: number
 }
 
 export default function AdminDashboard() {
@@ -31,9 +32,11 @@ export default function AdminDashboard() {
   const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [showPromoteModal, setShowPromoteModal] = useState(false)
-  const [showApprovalModal, setShowApprovalModal] = useState(false)
+         const [selectedUser, setSelectedUser] = useState<User | null>(null)
+         const [showPromoteModal, setShowPromoteModal] = useState(false)
+         const [showApprovalModal, setShowApprovalModal] = useState(false)
+         const [showPaymentModal, setShowPaymentModal] = useState(false)
+         const [paymentAmount, setPaymentAmount] = useState("")
 
   useEffect(() => {
     console.log("Auth status:", status)
@@ -122,21 +125,46 @@ export default function AdminDashboard() {
     }
   }
 
-  const approveUser = async (userId: string) => {
-    try {
-      const response = await fetch(`/api/admin/users/${userId}/approve`, {
-        method: "POST",
-        credentials: 'include'
-      })
-      if (response.ok) {
-        fetchUsers() // Refresh the list
-        setShowApprovalModal(false)
-        setSelectedUser(null)
-      }
-    } catch (error) {
-      console.error("Error approving user:", error)
-    }
-  }
+         const approveUser = async (userId: string) => {
+           try {
+             const response = await fetch(`/api/admin/users/${userId}/approve`, {
+               method: "POST",
+               credentials: 'include'
+             })
+             if (response.ok) {
+               fetchUsers() // Refresh the list
+               setShowApprovalModal(false)
+               setSelectedUser(null)
+             }
+           } catch (error) {
+             console.error("Error approving user:", error)
+           }
+         }
+
+         const payCommission = async (userId: string, amount: number) => {
+           try {
+             const response = await fetch(`/api/admin/users/${userId}/pay-commission`, {
+               method: "POST",
+               headers: {
+                 "Content-Type": "application/json"
+               },
+               body: JSON.stringify({ amount }),
+               credentials: 'include'
+             })
+             if (response.ok) {
+               fetchUsers() // Refresh the list
+               setShowPaymentModal(false)
+               setSelectedUser(null)
+               setPaymentAmount("")
+             } else {
+               const errorData = await response.json()
+               alert(`Failed to process payment: ${errorData.error || 'Unknown error'}`)
+             }
+           } catch (error) {
+             console.error("Error processing payment:", error)
+             alert(`Error processing payment: ${error}`)
+           }
+         }
 
   const deleteUser = async (userId: string) => {
     if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
@@ -245,9 +273,10 @@ export default function AdminDashboard() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clicks</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sales</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Earnings</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sales</th>
+                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Earnings</th>
+                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pending</th>
+                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -298,36 +327,51 @@ export default function AdminDashboard() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.location || "N/A"}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.clicks}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.orders}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.totalSales.toLocaleString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.earnings.toFixed(2)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
-                      {!user.isApproved && (
-                        <button
-                          onClick={() => { setSelectedUser(user); setShowApprovalModal(true); }}
-                          className="text-green-600 hover:text-green-900"
-                        >
-                          Approve
-                        </button>
-                      )}
-                      <select
-                        value={user.tier}
-                        onChange={(e) => changeTier(user.id, e.target.value)}
-                        className="text-sm border rounded px-2 py-1"
-                      >
-                        <option value="ADVOCATE">Advocate</option>
-                        <option value="AMBASSADOR">Ambassador</option>
-                      </select>
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.clicks}</td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.orders}</td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.totalSales.toLocaleString()}</td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.earnings.toFixed(2)}</td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                           <div className="flex items-center gap-2">
+                             <span className={`${user.pendingCommission > 0 ? 'text-orange-600 font-medium' : 'text-gray-500'}`}>
+                               £{user.pendingCommission.toFixed(2)}
+                             </span>
+                             {user.pendingCommission > 0 && (
+                               <button
+                                 onClick={() => { setSelectedUser(user); setPaymentAmount(user.pendingCommission.toString()); setShowPaymentModal(true); }}
+                                 className="text-blue-600 hover:text-blue-900 text-xs px-2 py-1 border border-blue-300 rounded"
+                               >
+                                 Pay
+                               </button>
+                             )}
+                           </div>
+                         </td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                           <div className="flex gap-2">
+                             {!user.isApproved && (
+                               <button
+                                 onClick={() => { setSelectedUser(user); setShowApprovalModal(true); }}
+                                 className="text-green-600 hover:text-green-900"
+                               >
+                                 Approve
+                               </button>
+                             )}
+                             <select
+                               value={user.tier}
+                               onChange={(e) => changeTier(user.id, e.target.value)}
+                               className="text-sm border rounded px-2 py-1"
+                             >
+                               <option value="ADVOCATE">Advocate</option>
+                               <option value="AMBASSADOR">Ambassador</option>
+                             </select>
+                             <button
+                               onClick={() => deleteUser(user.id)}
+                               className="text-red-600 hover:text-red-900"
+                             >
+                               Delete
+                             </button>
+                           </div>
+                         </td>
                 </tr>
                 ))
               )}
@@ -336,35 +380,86 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Approval Modal */}
-      {showApprovalModal && selectedUser && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
-            <h3 className="font-heading text-xl mb-4">Approve User</h3>
-            <div className="mb-4">
-              <p className="font-medium">{selectedUser.fullName || selectedUser.name || selectedUser.email}</p>
-              <p className="text-sm text-gray-600">{selectedUser.email}</p>
-              <p className="text-sm text-gray-600">{selectedUser.location}</p>
-            </div>
-            <p className="mb-6">Are you sure you want to approve this user? They will be able to access their dashboard and start earning commissions.</p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowApprovalModal(false)}
-                className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => approveUser(selectedUser.id)}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-              >
-                Approve
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+             {/* Approval Modal */}
+             {showApprovalModal && selectedUser && (
+               <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
+                 <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+                   <h3 className="font-heading text-xl mb-4">Approve User</h3>
+                   <div className="mb-4">
+                     <p className="font-medium">{selectedUser.fullName || selectedUser.name || selectedUser.email}</p>
+                     <p className="text-sm text-gray-600">{selectedUser.email}</p>
+                     <p className="text-sm text-gray-600">{selectedUser.location}</p>
+                   </div>
+                   <p className="mb-6">Are you sure you want to approve this user? They will be able to access their dashboard and start earning commissions.</p>
+                   <div className="flex justify-end space-x-4">
+                     <button
+                       onClick={() => setShowApprovalModal(false)}
+                       className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
+                     >
+                       Cancel
+                     </button>
+                     <button
+                       onClick={() => approveUser(selectedUser.id)}
+                       className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                     >
+                       Approve
+                     </button>
+                   </div>
+                 </div>
+               </div>
+             )}
 
-    </section>
-  )
-}
+             {/* Payment Modal */}
+             {showPaymentModal && selectedUser && (
+               <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
+                 <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+                   <h3 className="font-heading text-xl mb-4">Pay Commission</h3>
+                   <div className="mb-4">
+                     <p className="font-medium">{selectedUser.fullName || selectedUser.name || selectedUser.email}</p>
+                     <p className="text-sm text-gray-600">{selectedUser.email}</p>
+                     <p className="text-sm text-gray-600">Pending Commission: £{selectedUser.pendingCommission.toFixed(2)}</p>
+                   </div>
+                   <div className="mb-6">
+                     <label htmlFor="paymentAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                       Payment Amount (£)
+                     </label>
+                     <input
+                       type="number"
+                       id="paymentAmount"
+                       value={paymentAmount}
+                       onChange={(e) => setPaymentAmount(e.target.value)}
+                       step="0.01"
+                       min="0"
+                       max={selectedUser.pendingCommission}
+                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="0.00"
+                     />
+                   </div>
+                   <div className="flex justify-end space-x-4">
+                     <button
+                       onClick={() => { setShowPaymentModal(false); setPaymentAmount(""); }}
+                       className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
+                     >
+                       Cancel
+                     </button>
+                     <button
+                       onClick={() => {
+                         const amount = parseFloat(paymentAmount)
+                         if (amount > 0 && amount <= selectedUser.pendingCommission) {
+                           payCommission(selectedUser.id, amount)
+                         } else {
+                           alert("Please enter a valid amount between £0.01 and £" + selectedUser.pendingCommission.toFixed(2))
+                         }
+                       }}
+                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                     >
+                       Process Payment
+                     </button>
+                   </div>
+                 </div>
+               </div>
+             )}
+
+           </section>
+         )
+       }
