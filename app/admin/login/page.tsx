@@ -27,13 +27,14 @@ export default function AdminLogin() {
 
       console.log('Sign in result:', result)
 
-      if (result?.error) {
-        console.log('Sign in error:', result.error)
-        setError("Invalid email or password")
-      } else {
-        console.log('Sign in successful, redirecting...')
-        router.push("/admin")
-      }
+             if (result?.error) {
+               console.log('Sign in error:', result.error)
+               setError("Invalid email or password")
+             } else {
+               console.log('Sign in successful, redirecting...')
+               // Force a page reload to ensure session is properly set
+               window.location.href = "/admin"
+             }
     } catch (error) {
       console.error('Sign in error:', error)
       setError("An error occurred. Please try again.")

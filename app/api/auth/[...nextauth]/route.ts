@@ -111,8 +111,8 @@ const handler = NextAuth({
   ],
   session: { strategy: 'jwt' },
   pages: {
-    signIn: '/login',
-    error: '/login',
+    signIn: '/admin/login',
+    error: '/admin/login',
   },
   callbacks: {
     async session({ session, token }) {

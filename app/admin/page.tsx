@@ -28,9 +28,14 @@ export default function AdminDashboard() {
   const [showPromoteModal, setShowPromoteModal] = useState(false)
 
   useEffect(() => {
+    console.log("Auth status:", status)
+    console.log("Session:", session)
+    
     if (status === "unauthenticated") {
+      console.log("User not authenticated, redirecting to admin login")
       router.push("/admin/login")
-    } else if (session?.user?.role !== "ADMIN") {
+    } else if (status === "authenticated" && session?.user?.role !== "ADMIN") {
+      console.log("User authenticated but not admin, redirecting to dashboard")
       router.push("/dashboard")
     }
   }, [status, session, router])
@@ -120,16 +125,28 @@ export default function AdminDashboard() {
     }
   }
 
-  if (status === "loading" || loading) {
+  if (status === "loading") {
     return (
       <section className="mx-auto max-w-6xl px-6 py-12">
-        <div className="text-center">Loading...</div>
+        <div className="text-center">Loading authentication...</div>
+      </section>
+    )
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <section className="mx-auto max-w-6xl px-6 py-12">
+        <div className="text-center">Redirecting to login...</div>
       </section>
     )
   }
 
   if (!session || session.user.role !== "ADMIN") {
-    return null
+    return (
+      <section className="mx-auto max-w-6xl px-6 py-12">
+        <div className="text-center">Access denied. Redirecting...</div>
+      </section>
+    )
   }
 
   return (
