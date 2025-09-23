@@ -47,17 +47,10 @@ export default function Page() {
         return
       }
 
-      // Then send magic link
-      const result = await signIn("email", {
-        email,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        setMessage("Account created but error sending magic link. Please try again.")
-      } else {
-        setMessage("Account created! Check your email for the magic link to complete registration.")
-      }
+      // Do not send magic link now. Show application received message.
+      setMessage(
+        "Your application has been received. Each request is considered with care, and those selected will be invited to join the Listening Circle. If accepted, you will receive an email with a secure link to sign in."
+      )
     } catch (error) {
       setMessage("Error creating account. Please try again.")
     } finally {
