@@ -67,7 +67,7 @@ export default function Home() {
         
         {/* Subtitle */}
         <p className="text-brand-grey2 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
-          Join our exclusive referral community. Track clicks, earn commissions, and access our premium knowledge base.
+          An invitation-only circle for those who champion Lowther. Share your passion, grow our community, and enjoy exclusive rewards.
         </p>
         
         {/* Login Box */}
@@ -158,7 +158,8 @@ export default function Home() {
           <div className="p-6">
             <div className="text-brand-light text-3xl mb-4">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
-                <path d="M12 1v22M5 5h8a4 4 0 010 8H8a4 4 0 000 8h11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M17 6H10.5a3.5 3.5 0 000 7h3a3.5 3.5 0 010 7H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <h3 className="font-heading text-xl mb-2 text-brand-light">Earn Commissions</h3>

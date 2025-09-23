@@ -31,7 +31,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  transition: background-color 180ms ease-in-out, color 180ms ease-in-out, transform 180ms ease-in-out, box-shadow 180ms ease-in-out;
 }
 
 .btn-lowther:hover {
