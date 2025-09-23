@@ -5,16 +5,20 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          primary:  '#404040',
-          secondary:'#c69963',
-          dark:     '#151515',
-          haze:     '#f7f7f7',
-          grey1:    '#555555',
+          primary:  '#1a1a1a',
+          secondary:'#d4af37',
+          dark:     '#0a0a0a',
+          light:    '#f8f8f8',
+          haze:     '#2a2a2a',
+          grey1:    '#666666',
           grey2:    '#999999',
-          grey3:    '#d1d1d1',
-          grey4:    '#e3e3e3',
-          error:    '#f14b59',
-          success:  '#60be7b'
+          grey3:    '#cccccc',
+          grey4:    '#e5e5e5',
+          error:    '#ff4757',
+          success:  '#2ed573',
+          gold:     '#d4af37',
+          bronze:   '#cd7f32',
+          platinum: '#e5e4e2'
         }
       },
       borderRadius: { '2xl': '1rem' },
