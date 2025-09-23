@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(request: NextRequest) {
@@ -7,7 +8,7 @@ export async function GET(request: NextRequest) {
     console.log("Admin users API called")
     console.log("Request headers:", Object.fromEntries(request.headers.entries()))
     
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     console.log("Session:", session)
     console.log("Session user:", session?.user)
     console.log("Session user ID:", session?.user?.id)

@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-const handler = NextAuth({
+export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
@@ -143,6 +143,8 @@ const handler = NextAuth({
       return baseUrl
     }
   }
-})
+}
+
+const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
 
