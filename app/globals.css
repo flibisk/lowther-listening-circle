@@ -40,6 +40,21 @@ html, body {
 
 .btn-lowther--full { width: 100%; }
 
+/* Smaller button variant for navigation */
+.btn-lowther--sm {
+  padding: 10px 20px;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+/* CTA variant: gold to white to draw attention */
+.btn-lowther--cta {
+  background: linear-gradient(90deg, #c69963 0%, #ffffff 100%);
+}
+.btn-lowther--cta:hover {
+  background: linear-gradient(90deg, #ffffff 0%, #c69963 100%);
+}
+
 /* HV Muse font styles */
 .font-heading { font-family: var(--font-hvmuse); }
 .font-heading.italic { font-style: italic; }

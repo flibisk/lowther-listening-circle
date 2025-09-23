@@ -32,10 +32,10 @@ export function Navigation() {
       ) : (
         // Unauthenticated user navigation
         <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="btn-lowther">
+          <Link href="/dashboard" className="btn-lowther btn-lowther--sm">
             Sign in
           </Link>
-          <Link href="/admin/login" className="btn-lowther">
+          <Link href="/admin/login" className="btn-lowther btn-lowther--sm">
             Admin
           </Link>
         </div>

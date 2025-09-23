@@ -78,7 +78,7 @@ export default function Home() {
             // Sign In Button
             <button
               onClick={() => setShowLoginForm(true)}
-              className="btn-lowther btn-lowther--full"
+              className="btn-lowther btn-lowther--full btn-lowther--cta"
             >
               Sign In
             </button>
@@ -146,17 +146,31 @@ export default function Home() {
         {/* Features */}
         <div className="mt-16 grid md:grid-cols-3 gap-8 text-center">
           <div className="p-6">
-            <div className="text-brand-gold text-3xl mb-4">📊</div>
+            <div className="text-brand-light text-3xl mb-4">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
+                <path d="M3 3v18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7 15l3-3 4 4 5-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <h3 className="font-heading text-xl mb-2 text-brand-light">Track Performance</h3>
             <p className="text-brand-grey2">Monitor clicks, orders, and earnings in real-time</p>
           </div>
           <div className="p-6">
-            <div className="text-brand-gold text-3xl mb-4">💰</div>
+            <div className="text-brand-light text-3xl mb-4">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
+                <path d="M12 1v22M5 5h8a4 4 0 010 8H8a4 4 0 000 8h11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <h3 className="font-heading text-xl mb-2 text-brand-light">Earn Commissions</h3>
             <p className="text-brand-grey2">Get rewarded for every successful referral</p>
           </div>
           <div className="p-6">
-            <div className="text-brand-gold text-3xl mb-4">📚</div>
+            <div className="text-brand-light text-3xl mb-4">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
+                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 4.5A2.5 2.5 0 016.5 7H20v13H6.5A2.5 2.5 0 014 17.5v-13z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <h3 className="font-heading text-xl mb-2 text-brand-light">Knowledge Base</h3>
             <p className="text-brand-grey2">Access exclusive content and resources</p>
           </div>
