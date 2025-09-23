@@ -45,9 +45,19 @@ export default function AdminDashboard() {
     try {
       const response = await fetch("/api/admin/users")
       const data = await response.json()
-      setUsers(data)
+      console.log("Fetched users data:", data)
+      console.log("Data type:", typeof data)
+      console.log("Is array:", Array.isArray(data))
+      
+      if (Array.isArray(data)) {
+        setUsers(data)
+      } else {
+        console.error("Expected array but got:", data)
+        setUsers([])
+      }
     } catch (error) {
       console.error("Error fetching users:", error)
+      setUsers([])
     } finally {
       setLoading(false)
     }
@@ -123,19 +133,19 @@ export default function AdminDashboard() {
       <div className="grid md:grid-cols-4 gap-6 mb-8">
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Total Users</div>
-          <div className="text-2xl font-heading">{users.length}</div>
+          <div className="text-2xl font-heading">{Array.isArray(users) ? users.length : 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Advocates</div>
-          <div className="text-2xl font-heading">{users.filter(u => u.tier === "ADVOCATE").length}</div>
+          <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "ADVOCATE").length : 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Ambassadors</div>
-          <div className="text-2xl font-heading">{users.filter(u => u.tier === "AMBASSADOR").length}</div>
+          <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "AMBASSADOR").length : 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Total Sales</div>
-          <div className="text-2xl font-heading">£{users.reduce((sum, u) => sum + u.totalSales, 0).toLocaleString()}</div>
+          <div className="text-2xl font-heading">£{Array.isArray(users) ? users.reduce((sum, u) => sum + u.totalSales, 0).toLocaleString() : 0}</div>
         </div>
       </div>
 
@@ -158,7 +168,7 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
+              {Array.isArray(users) && users.map((user) => (
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
