@@ -3,6 +3,7 @@
 import { signIn, useSession } from "next-auth/react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export default function Page() {
   const [email, setEmail] = useState("")
@@ -65,96 +66,149 @@ export default function Page() {
   }
 
   return (
-    <div className="mx-auto max-w-md p-8">
-      <h1 className="font-heading text-3xl mb-2">Sign up</h1>
-      <p className="text-gray-600 mb-6">Enter your email to create an account and receive a magic link</p>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
-          </label>
-          <input
-            type="text"
-            id="fullName"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="John Doe"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email address
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="your@email.com"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-            Address
-          </label>
-          <textarea
-            id="address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="123 Main Street, City, State, ZIP"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-            Location
-          </label>
-          <input
-            type="text"
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="London, UK"
+    <div className="min-h-screen bg-gradient-to-br from-brand-dark via-brand-primary to-brand-haze flex items-center justify-center">
+      <div className="text-center max-w-4xl mx-auto px-6">
+        {/* Listening Circle Image */}
+        <div className="mb-8">
+          <img 
+            src="/listening-circle.png" 
+            alt="Lowther Listening Circle" 
+            className="mx-auto h-32 w-auto object-contain drop-shadow-2xl"
           />
         </div>
         
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? "Sending..." : "Create Account & Send Magic Link"}
-        </button>
-      </form>
+        {/* Title */}
+        <h1 className="font-heading text-4xl md:text-6xl mb-6 text-brand-light tracking-wide">
+          Join Listening Circle
+        </h1>
+        
+        {/* Subtitle */}
+        <p className="text-brand-grey2 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
+          Create your account and start earning commissions through our exclusive referral program
+        </p>
+        
+        {/* Registration Form */}
+        <div className="bg-brand-primary/80 backdrop-blur-sm border border-brand-gold/30 rounded-3xl p-8 mb-6 max-w-lg mx-auto shadow-2xl">
+          <h2 className="font-heading text-2xl mb-6 text-brand-gold">Create Account</h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-brand-grey2 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300"
+                placeholder="John Doe"
+              />
+            </div>
 
-      {message && (
-        <div className={`mt-4 p-3 rounded-md ${
-          message.includes("Check your email") 
-            ? "bg-green-100 text-green-700" 
-            : "bg-red-100 text-red-700"
-        }`}>
-          {message}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-brand-grey2 mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300"
+                placeholder="your@email.com"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-brand-grey2 mb-2">
+                Address
+              </label>
+              <textarea
+                id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+                rows={3}
+                className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300 resize-none"
+                placeholder="123 Main Street, City, State, ZIP"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="location" className="block text-sm font-medium text-brand-grey2 mb-2">
+                Location
+              </label>
+              <input
+                type="text"
+                id="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300"
+                placeholder="London, UK"
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold text-lg hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Creating Account...
+                </div>
+              ) : (
+                "Create Account & Send Magic Link"
+              )}
+            </button>
+          </form>
+
+          {message && (
+            <div className={`mt-6 p-4 rounded-xl ${
+              message.includes("Check your email") 
+                ? "bg-green-500/20 border border-green-500/30 text-green-300" 
+                : "bg-red-500/20 border border-red-500/30 text-red-300"
+            }`}>
+              {message}
+            </div>
+          )}
         </div>
-      )}
-
-      <p className="mt-6 text-sm text-gray-600">
-        Already have an account?{" "}
-        <a href="/login" className="text-blue-600 hover:underline">
-          Sign in
-        </a>
-      </p>
+        
+        {/* Sign In Link */}
+        <div className="text-center">
+          <p className="text-brand-grey2 mb-4">Already have an account?</p>
+          <Link 
+            href="/" 
+            className="inline-block px-8 py-3 rounded-2xl border-2 border-brand-gold text-brand-gold font-semibold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 hover:shadow-lg"
+          >
+            Sign In
+          </Link>
+        </div>
+        
+        {/* Benefits */}
+        <div className="mt-16 grid md:grid-cols-3 gap-8 text-center">
+          <div className="p-6">
+            <div className="text-brand-gold text-3xl mb-4">🎯</div>
+            <h3 className="font-heading text-xl mb-2 text-brand-light">Easy Setup</h3>
+            <p className="text-brand-grey2">Quick registration with magic link authentication</p>
+          </div>
+          <div className="p-6">
+            <div className="text-brand-gold text-3xl mb-4">💎</div>
+            <h3 className="font-heading text-xl mb-2 text-brand-light">Exclusive Access</h3>
+            <p className="text-brand-grey2">Join our premium referral community</p>
+          </div>
+          <div className="p-6">
+            <div className="text-brand-gold text-3xl mb-4">🚀</div>
+            <h3 className="font-heading text-xl mb-2 text-brand-light">Start Earning</h3>
+            <p className="text-brand-grey2">Begin earning commissions immediately</p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
