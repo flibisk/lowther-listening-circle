@@ -94,6 +94,9 @@ export async function GET(request: NextRequest) {
       earnings: user.Ledger.reduce((sum, ledger) => sum + Number(ledger.amount), 0)
     }))
 
+    console.log("Users with stats:", usersWithStats)
+    console.log("Number of users returned:", usersWithStats.length)
+
     return NextResponse.json(usersWithStats)
   } catch (error) {
     console.error("Error fetching users:", error)
