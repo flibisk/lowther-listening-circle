@@ -74,6 +74,7 @@ export default function AdminDashboard() {
       }
       
       if (Array.isArray(data)) {
+        console.log("Setting users:", data)
         setUsers(data)
       } else {
         console.error("Expected array but got:", data)
