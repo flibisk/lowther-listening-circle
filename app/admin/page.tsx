@@ -53,10 +53,14 @@ export default function AdminDashboard() {
     }
   }
 
-  const promoteToAmbassador = async (userId: string) => {
+  const changeTier = async (userId: string, newTier: string) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/promote`, {
-        method: "POST"
+      const response = await fetch(`/api/admin/users/${userId}/tier`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ tier: newTier })
       })
       if (response.ok) {
         fetchUsers() // Refresh the list
@@ -64,7 +68,7 @@ export default function AdminDashboard() {
         setSelectedUser(null)
       }
     } catch (error) {
-      console.error("Error promoting user:", error)
+      console.error("Error changing tier:", error)
     }
   }
 
@@ -100,7 +104,10 @@ export default function AdminDashboard() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="font-heading text-3xl">Admin Dashboard</h1>
+        <div>
+          <h1 className="font-heading text-3xl">Admin Dashboard</h1>
+          <p className="text-gray-600 mt-1">Manage all referrers and their tiers</p>
+        </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-600">Welcome, {session.user?.email}</span>
           <button
@@ -174,16 +181,14 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.earnings.toFixed(2)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedUser(user)
-                          setShowPromoteModal(true)
-                        }}
-                        disabled={user.tier === "AMBASSADOR"}
-                        className="text-indigo-600 hover:text-indigo-900 disabled:text-gray-400 disabled:cursor-not-allowed"
+                      <select
+                        value={user.tier}
+                        onChange={(e) => changeTier(user.id, e.target.value)}
+                        className="text-sm border rounded px-2 py-1"
                       >
-                        Promote
-                      </button>
+                        <option value="ADVOCATE">Advocate</option>
+                        <option value="AMBASSADOR">Ambassador</option>
+                      </select>
                       <button
                         onClick={() => deleteUser(user.id)}
                         className="text-red-600 hover:text-red-900"
@@ -199,38 +204,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Promote Modal */}
-      {showPromoteModal && selectedUser && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Promote to Ambassador
-              </h3>
-              <p className="text-sm text-gray-500 mb-4">
-                Promote {selectedUser.email} to Ambassador tier? They will earn 15% commission instead of 10%.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => promoteToAmbassador(selectedUser.id)}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                >
-                  Promote
-                </button>
-                <button
-                  onClick={() => {
-                    setShowPromoteModal(false)
-                    setSelectedUser(null)
-                  }}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   )
 }
