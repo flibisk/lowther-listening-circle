@@ -5,8 +5,13 @@ import { prisma } from "@/lib/prisma"
 export async function GET(request: NextRequest) {
   try {
     console.log("Admin users API called")
+    console.log("Request headers:", Object.fromEntries(request.headers.entries()))
+    
     const session = await getServerSession()
     console.log("Session:", session)
+    console.log("Session user:", session?.user)
+    console.log("Session user ID:", session?.user?.id)
+    console.log("Session user role:", session?.user?.role)
     
     if (!session?.user?.id) {
       console.log("No session or user ID")

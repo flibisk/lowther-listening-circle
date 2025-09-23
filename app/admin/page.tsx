@@ -36,8 +36,15 @@ export default function AdminDashboard() {
   }, [status, session, router])
 
   useEffect(() => {
+    console.log("Session changed:", session)
+    console.log("Session user:", session?.user)
+    console.log("Session user role:", session?.user?.role)
+    
     if (session?.user?.role === "ADMIN") {
+      console.log("User is admin, fetching users...")
       fetchUsers()
+    } else {
+      console.log("User is not admin or no session")
     }
   }, [session])
 
