@@ -5,9 +5,10 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
@@ -15,14 +16,14 @@ export async function GET(
     }
 
     // Ensure user can only access their own data
-    if (session.user.id !== params.id) {
+    if (session.user.id !== id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     // Get user's advocates
     const advocates = await prisma.user.findMany({
       where: { 
-        ambassadorId: params.id,
+        ambassadorId: id,
         isApproved: true // Only show approved advocates
       },
       select: {

@@ -3,39 +3,47 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('Debug Stats API called for user:', params.id)
+    const { id } = await params
+    console.log('Debug Stats API called for user:', id)
     
     // Get user stats without authentication for debugging
-    const [clicks, orders, earnings] = await Promise.all([
+    const [clicks, orders, earnings, totalSalesResult] = await Promise.all([
       // Count clicks
       prisma.click.count({
-        where: { userId: params.id }
+        where: { userId: id }
       }),
       // Count orders
       prisma.order.count({
-        where: { userId: params.id }
+        where: { userId: id }
       }),
       // Sum earnings from commission ledger
       prisma.commissionLedger.aggregate({
         where: { 
-          userId: params.id,
+          userId: id,
           status: { in: ['APPROVED', 'PAID'] }
         },
         _sum: { amount: true }
+      }),
+      // Sum total sales
+      prisma.order.aggregate({
+        where: { userId: id },
+        _sum: { subtotalNet: true }
       })
     ])
 
     const totalEarnings = earnings._sum.amount || 0
+    const totalSales = totalSalesResult._sum.subtotalNet || 0
 
-    console.log('Debug Stats for user', params.id, ':', { clicks, orders, earnings: Number(totalEarnings) })
+    console.log('Debug Stats for user', id, ':', { clicks, orders, earnings: Number(totalEarnings), totalSales: Number(totalSales) })
 
     return NextResponse.json({
       clicks,
       orders,
-      earnings: Number(totalEarnings)
+      earnings: Number(totalEarnings),
+      totalSales: Number(totalSales)
     })
   } catch (error) {
     console.error("Error fetching user stats:", error)
