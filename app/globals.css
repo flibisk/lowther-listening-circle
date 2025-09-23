@@ -47,12 +47,14 @@ html, body {
   letter-spacing: 2px;
 }
 
-/* CTA variant: gold to white to draw attention */
+/* CTA variant: gold by default, white on hover */
 .btn-lowther--cta {
-  background: linear-gradient(90deg, #c69963 0%, #ffffff 100%);
+  background-color: #c69963;
+  color: #fff;
 }
 .btn-lowther--cta:hover {
-  background: linear-gradient(90deg, #ffffff 0%, #c69963 100%);
+  background-color: #ffffff;
+  color: #000;
 }
 
 /* HV Muse font styles */
