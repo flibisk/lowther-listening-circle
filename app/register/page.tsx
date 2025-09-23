@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation"
 
 export default function Page() {
   const [email, setEmail] = useState("")
+  const [fullName, setFullName] = useState("")
+  const [address, setAddress] = useState("")
+  const [location, setLocation] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
   const { data: session, status } = useSession()
@@ -23,18 +26,39 @@ export default function Page() {
     setMessage("")
 
     try {
+      // First, create the user with additional information
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          fullName,
+          address,
+          location,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        setMessage(errorData.error || "Error creating account. Please try again.")
+        return
+      }
+
+      // Then send magic link
       const result = await signIn("email", {
         email,
         redirect: false,
       })
 
       if (result?.error) {
-        setMessage("Error sending magic link. Please try again.")
+        setMessage("Account created but error sending magic link. Please try again.")
       } else {
-        setMessage("Check your email for the magic link!")
+        setMessage("Account created! Check your email for the magic link to complete registration.")
       }
     } catch (error) {
-      setMessage("Error sending magic link. Please try again.")
+      setMessage("Error creating account. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -47,6 +71,21 @@ export default function Page() {
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
+          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name
+          </label>
+          <input
+            type="text"
+            id="fullName"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="John Doe"
+          />
+        </div>
+
+        <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
             Email address
           </label>
@@ -58,6 +97,36 @@ export default function Page() {
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="your@email.com"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+            Address
+          </label>
+          <textarea
+            id="address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            required
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="123 Main Street, City, State, ZIP"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+            Location
+          </label>
+          <input
+            type="text"
+            id="location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="London, UK"
           />
         </div>
         

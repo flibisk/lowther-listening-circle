@@ -48,10 +48,17 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   name          String?
+  fullName      String?
+  address       String?
+  location      String?
   role          Role      @default(MEMBER)
   tier          Tier      @default(ADVOCATE)
   refCode       String    @unique @default(cuid())
   discountCode  String?   @unique
+  isApproved    Boolean   @default(false)
+  approvedAt    DateTime?
+  approvedBy    String?
+  ambassadorId  String?   // ID of the Ambassador who referred this user
   createdAt     DateTime  @default(now())
   Clicks        Click[]
   Orders        Order[]
@@ -59,6 +66,9 @@ model User {
   Leads         Lead[]
   accounts      Account[]
   sessions      Session[]
+  // Ambassador relationship
+  ambassador    User?     @relation("AmbassadorAdvocate", fields: [ambassadorId], references: [id])
+  advocates     User[]    @relation("AmbassadorAdvocate")
 }
 
 model Click {

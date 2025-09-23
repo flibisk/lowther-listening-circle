@@ -8,10 +8,17 @@ interface User {
   id: string
   email: string
   name?: string
+  fullName?: string
+  address?: string
+  location?: string
   refCode: string
   discountCode?: string
   role: string
   tier: string
+  isApproved: boolean
+  approvedAt?: string
+  approvedBy?: string
+  ambassadorId?: string
   createdAt: string
   clicks: number
   orders: number
@@ -26,6 +33,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [showPromoteModal, setShowPromoteModal] = useState(false)
+  const [showApprovalModal, setShowApprovalModal] = useState(false)
 
   useEffect(() => {
     console.log("Auth status:", status)
@@ -108,6 +116,22 @@ export default function AdminDashboard() {
     }
   }
 
+  const approveUser = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/approve`, {
+        method: "POST",
+        credentials: 'include'
+      })
+      if (response.ok) {
+        fetchUsers() // Refresh the list
+        setShowApprovalModal(false)
+        setSelectedUser(null)
+      }
+    } catch (error) {
+      console.error("Error approving user:", error)
+    }
+  }
+
   const deleteUser = async (userId: string) => {
     if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
       return
@@ -169,18 +193,22 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid md:grid-cols-4 gap-6 mb-8">
+      <div className="grid md:grid-cols-5 gap-6 mb-8">
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Total Users</div>
           <div className="text-2xl font-heading">{Array.isArray(users) ? users.length : 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
+          <div className="text-sm text-brand-grey2">Pending Approval</div>
+          <div className="text-2xl font-heading text-orange-600">{Array.isArray(users) ? users.filter(u => !u.isApproved).length : 0}</div>
+        </div>
+        <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Advocates</div>
-          <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "ADVOCATE").length : 0}</div>
+          <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "ADVOCATE" && u.isApproved).length : 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Ambassadors</div>
-          <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "AMBASSADOR").length : 0}</div>
+          <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "AMBASSADOR" && u.isApproved).length : 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Total Sales</div>
@@ -198,7 +226,9 @@ export default function AdminDashboard() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tier</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clicks</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sales</th>
@@ -211,9 +241,19 @@ export default function AdminDashboard() {
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{user.email}</div>
-                      <div className="text-sm text-gray-500">Ref: {user.refCode}</div>
+                      <div className="text-sm font-medium text-gray-900">{user.fullName || user.name || user.email}</div>
+                      <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="text-xs text-gray-400">Ref: {user.refCode}</div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      user.isApproved 
+                        ? "bg-green-100 text-green-800" 
+                        : "bg-orange-100 text-orange-800"
+                    }`}>
+                      {user.isApproved ? "Approved" : "Pending"}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -224,12 +264,21 @@ export default function AdminDashboard() {
                       {user.tier}
                     </span>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.location || "N/A"}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.clicks}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.orders}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.totalSales.toLocaleString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.earnings.toFixed(2)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
+                      {!user.isApproved && (
+                        <button
+                          onClick={() => { setSelectedUser(user); setShowApprovalModal(true); }}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Approve
+                        </button>
+                      )}
                       <select
                         value={user.tier}
                         onChange={(e) => changeTier(user.id, e.target.value)}
@@ -252,6 +301,35 @@ export default function AdminDashboard() {
           </table>
         </div>
       </div>
+
+      {/* Approval Modal */}
+      {showApprovalModal && selectedUser && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="font-heading text-xl mb-4">Approve User</h3>
+            <div className="mb-4">
+              <p className="font-medium">{selectedUser.fullName || selectedUser.name || selectedUser.email}</p>
+              <p className="text-sm text-gray-600">{selectedUser.email}</p>
+              <p className="text-sm text-gray-600">{selectedUser.location}</p>
+            </div>
+            <p className="mb-6">Are you sure you want to approve this user? They will be able to access their dashboard and start earning commissions.</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowApprovalModal(false)}
+                className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => approveUser(selectedUser.id)}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+              >
+                Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </section>
   )
