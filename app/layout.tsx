@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                      <nav className="flex items-center gap-6 text-sm">
                        <Link href="/knowledge-base">Knowledge base</Link>
                        <Link href="/dashboard" className="px-4 py-2 rounded-2xl bg-brand-secondary text-white">Sign in</Link>
-                       <Link href="/admin" className="px-4 py-2 rounded-2xl bg-red-600 text-white">Admin</Link>
+                       <Link href="/admin/login" className="px-4 py-2 rounded-2xl bg-red-600 text-white">Admin</Link>
                      </nav>
             </div>
           </header>

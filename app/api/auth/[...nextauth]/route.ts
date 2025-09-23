@@ -1,8 +1,10 @@
 import NextAuth from "next-auth"
 import EmailProvider from "next-auth/providers/email"
+import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import { Resend } from "resend"
+import bcrypt from "bcryptjs"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -40,6 +42,59 @@ const handler = NextAuth({
           throw new Error("Failed to send email")
         }
       },
+    }),
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+
+        // Check for admin credentials
+        if (credentials.email === "peter@lowtherloudspeakers.com" && credentials.password === "warpwarp") {
+          // Find or create admin user
+          let user = await prisma.user.findUnique({
+            where: { email: "peter@lowtherloudspeakers.com" }
+          })
+
+          if (!user) {
+            // Create admin user if doesn't exist
+            user = await prisma.user.create({
+              data: {
+                email: "peter@lowtherloudspeakers.com",
+                name: "Peter",
+                role: "ADMIN",
+                tier: "AMBASSADOR",
+                refCode: "LW-ADMIN"
+              }
+            })
+          } else {
+            // Update existing user to admin if needed
+            if (user.role !== "ADMIN") {
+              user = await prisma.user.update({
+                where: { id: user.id },
+                data: { role: "ADMIN", tier: "AMBASSADOR" }
+              })
+            }
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            tier: user.tier,
+            refCode: user.refCode,
+            discountCode: user.discountCode
+          }
+        }
+
+        return null
+      }
     })
   ],
   session: { strategy: 'database' },
