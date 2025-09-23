@@ -148,11 +148,16 @@ export default function AdminDashboard() {
         method: "DELETE",
         credentials: 'include'
       })
+      
       if (response.ok) {
         fetchUsers() // Refresh the list
+      } else {
+        const errorData = await response.json()
+        alert(`Failed to delete user: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error("Error deleting user:", error)
+      alert(`Error deleting user: ${error}`)
     }
   }
 
