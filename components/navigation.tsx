@@ -24,7 +24,7 @@ export function Navigation() {
           </span>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="px-4 py-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="btn-lowther"
           >
             Sign Out
           </button>
@@ -32,10 +32,10 @@ export function Navigation() {
       ) : (
         // Unauthenticated user navigation
         <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="px-4 py-2 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl">
+          <Link href="/dashboard" className="btn-lowther">
             Sign in
           </Link>
-          <Link href="/admin/login" className="px-4 py-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl">
+          <Link href="/admin/login" className="btn-lowther">
             Admin
           </Link>
         </div>

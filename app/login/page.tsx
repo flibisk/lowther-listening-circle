@@ -86,7 +86,7 @@ export default function Page() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold text-lg hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="btn-lowther btn-lowther--full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -115,7 +115,7 @@ export default function Page() {
           <p className="text-brand-grey2 mb-4">Don't have an account?</p>
           <Link 
             href="/register" 
-            className="inline-block px-8 py-3 rounded-2xl border-2 border-brand-gold text-brand-gold font-semibold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 hover:shadow-lg"
+            className="btn-lowther"
           >
             Sign Up
           </Link>

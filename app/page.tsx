@@ -78,7 +78,7 @@ export default function Home() {
             // Sign In Button
             <button
               onClick={() => setShowLoginForm(true)}
-              className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold text-lg hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="btn-lowther btn-lowther--full"
             >
               Sign In
             </button>
@@ -104,7 +104,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="btn-lowther btn-lowther--full disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center">
@@ -119,7 +119,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setShowLoginForm(false)}
-                  className="px-4 py-3 rounded-xl border border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300"
+                  className="btn-lowther"
                 >
                   Cancel
                 </button>
@@ -137,7 +137,7 @@ export default function Home() {
           <p className="text-brand-grey2 mb-4">New to Listening Circle?</p>
           <Link 
             href="/register" 
-            className="inline-block px-8 py-3 rounded-2xl border-2 border-brand-gold text-brand-gold font-semibold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 hover:shadow-lg"
+            className="btn-lowther"
           >
             Register Now
           </Link>

@@ -93,7 +93,7 @@ export default function Dashboard() {
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="btn-lowther"
           >
             Sign Out
           </button>
@@ -194,7 +194,7 @@ export default function Dashboard() {
                 </div>
                 <button
                   onClick={() => copyToClipboard(referralLink, 'link')}
-                  className="ml-6 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50"
+                  className="ml-6 btn-lowther disabled:opacity-50"
                   disabled={!referralLink}
                 >
                   {copied === 'link' ? 'Copied!' : 'Copy'}
@@ -216,7 +216,7 @@ export default function Dashboard() {
                   </div>
                   <button
                     onClick={() => copyToClipboard(discountCode, 'code')}
-                    className="ml-6 px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="ml-6 btn-lowther"
                   >
                     {copied === 'code' ? 'Copied!' : 'Copy'}
                   </button>
@@ -246,7 +246,7 @@ export default function Dashboard() {
                   </div>
                   <button
                     onClick={() => copyToClipboard(`${referralLink}?ambassador=${session.user.refCode}`, 'ambassador-link')}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50"
+                    className="btn-lowther disabled:opacity-50"
                     disabled={!referralLink}
                   >
                     {copied === 'ambassador-link' ? 'Copied!' : 'Copy'}
