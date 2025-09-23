@@ -43,11 +43,21 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
+      console.log("Fetching users...")
       const response = await fetch("/api/admin/users")
+      console.log("Response status:", response.status)
+      console.log("Response ok:", response.ok)
+      
       const data = await response.json()
       console.log("Fetched users data:", data)
       console.log("Data type:", typeof data)
       console.log("Is array:", Array.isArray(data))
+      
+      if (!response.ok) {
+        console.error("API error:", data)
+        setUsers([])
+        return
+      }
       
       if (Array.isArray(data)) {
         setUsers(data)

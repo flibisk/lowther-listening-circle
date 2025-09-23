@@ -4,9 +4,12 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(request: NextRequest) {
   try {
+    console.log("Admin users API called")
     const session = await getServerSession()
+    console.log("Session:", session)
     
     if (!session?.user?.id) {
+      console.log("No session or user ID")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -16,7 +19,10 @@ export async function GET(request: NextRequest) {
       select: { role: true }
     })
 
+    console.log("User found:", user)
+
     if (!user || user.role !== "ADMIN") {
+      console.log("User not admin or not found")
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
