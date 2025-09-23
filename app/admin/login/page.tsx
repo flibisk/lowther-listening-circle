@@ -1,15 +1,19 @@
 "use client"
 
 import { signIn } from "next-auth/react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("peter@lowtherloudspeakers.com")
+  const [password, setPassword] = useState("warpwarp")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
+
+  useEffect(() => {
+    console.log("Admin login page loaded")
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,14 +31,14 @@ export default function AdminLogin() {
 
       console.log('Sign in result:', result)
 
-             if (result?.error) {
-               console.log('Sign in error:', result.error)
-               setError("Invalid email or password")
-             } else {
-               console.log('Sign in successful, redirecting...')
-               // Force a page reload to ensure session is properly set
-               window.location.href = "/admin"
-             }
+      if (result?.error) {
+        console.log('Sign in error:', result.error)
+        setError("Invalid email or password")
+      } else {
+        console.log('Sign in successful, redirecting...')
+        // Force a page reload to ensure session is properly set
+        window.location.href = "/admin"
+      }
     } catch (error) {
       console.error('Sign in error:', error)
       setError("An error occurred. Please try again.")
@@ -53,6 +57,13 @@ export default function AdminLogin() {
           <p className="mt-2 text-center text-sm text-gray-600">
             Lowther Listening Circle Admin Portal
           </p>
+          <div className="mt-4 p-4 bg-blue-50 rounded-md">
+            <p className="text-sm text-blue-800">
+              <strong>Default credentials:</strong><br />
+              Email: peter@lowtherloudspeakers.com<br />
+              Password: warpwarp
+            </p>
+          </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">

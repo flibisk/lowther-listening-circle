@@ -23,6 +23,12 @@ export async function GET(request: NextRequest) {
     console.log("Session user ID:", session?.user?.id)
     console.log("Session user role:", session?.user?.role)
     
+    // Also try to get session from request headers
+    const authHeader = request.headers.get('authorization')
+    const cookieHeader = request.headers.get('cookie')
+    console.log("Auth header:", authHeader)
+    console.log("Cookie header:", cookieHeader)
+    
     if (!session?.user?.id) {
       console.log("No session or user ID")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
