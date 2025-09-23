@@ -49,7 +49,7 @@ model User {
   name          String?
   role          Role     @default(MEMBER)
   tier          Tier     @default(ADVOCATE)
-  refCode       String   @unique
+  refCode       String   @unique @default(cuid())
   discountCode  String?  @unique
   createdAt     DateTime @default(now())
   Clicks        Click[]
