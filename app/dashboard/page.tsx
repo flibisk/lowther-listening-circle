@@ -19,9 +19,14 @@ export default function Dashboard() {
   useEffect(() => {
     if (session?.user?.id) {
       // Fetch user stats
-      fetch(`/api/user/${session.user.id}/stats`)
+      fetch(`/api/user/${session.user.id}/stats`, {
+        credentials: 'include'
+      })
         .then(res => res.json())
-        .then(data => setStats(data))
+        .then(data => {
+          console.log('Stats API response:', data)
+          setStats(data)
+        })
         .catch(err => console.error('Error fetching stats:', err))
     }
   }, [session])
