@@ -116,6 +116,8 @@ export const authOptions = {
   },
   callbacks: {
     async session({ session, token }) {
+      console.log('Session callback - token:', token)
+      console.log('Session callback - session:', session)
       if (token) {
         session.user.id = token.id as string
         session.user.refCode = token.refCode as string
@@ -123,9 +125,12 @@ export const authOptions = {
         session.user.role = token.role as string
         session.user.tier = token.tier as string
       }
+      console.log('Session callback - final session:', session)
       return session
     },
     async jwt({ token, user }) {
+      console.log('JWT callback - user:', user)
+      console.log('JWT callback - token:', token)
       if (user) {
         token.id = user.id
         token.refCode = user.refCode
@@ -133,6 +138,7 @@ export const authOptions = {
         token.role = user.role
         token.tier = user.tier
       }
+      console.log('JWT callback - final token:', token)
       return token
     },
     async redirect({ url, baseUrl }) {
