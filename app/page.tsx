@@ -1,6 +1,31 @@
+"use client"
+
 import Link from "next/link"
+import { useState } from "react"
+import { signIn } from "next-auth/react"
 
 export default function Home() {
+  const [showLoginForm, setShowLoginForm] = useState(false)
+  const [email, setEmail] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    
+    try {
+      await signIn('email', { 
+        email, 
+        redirect: false 
+      })
+      // Show success message or redirect
+    } catch (error) {
+      console.error('Sign in error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-dark via-brand-primary to-brand-haze flex items-center justify-center">
       <div className="text-center max-w-4xl mx-auto px-6">
@@ -24,16 +49,65 @@ export default function Home() {
         </p>
         
         {/* Login Box */}
-        <div className="bg-brand-primary/80 backdrop-blur-sm border border-brand-gold/30 rounded-3xl p-8 mb-6 max-w-md mx-auto shadow-2xl">
+        <div className="bg-brand-primary/80 backdrop-blur-sm border border-brand-gold/30 rounded-3xl p-8 mb-6 max-w-md mx-auto shadow-2xl transition-all duration-500 ease-in-out">
           <h2 className="font-heading text-2xl mb-6 text-brand-gold">Welcome Back</h2>
-          <div className="space-y-4">
-            <Link 
-              href="/login" 
-              className="w-full block px-6 py-4 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold text-lg hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          
+          {!showLoginForm ? (
+            // Sign In Button
+            <button
+              onClick={() => setShowLoginForm(true)}
+              className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold text-lg hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               Sign In
-            </Link>
-          </div>
+            </button>
+          ) : (
+            // Login Form
+            <form onSubmit={handleSignIn} className="space-y-4 animate-in slide-in-from-top-4 duration-500">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-brand-grey2 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300"
+                  placeholder="Enter your email"
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark font-semibold hover:from-brand-bronze hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Sending...
+                    </div>
+                  ) : (
+                    "Send Magic Link"
+                  )}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setShowLoginForm(false)}
+                  className="px-4 py-3 rounded-xl border border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300"
+                >
+                  Cancel
+                </button>
+              </div>
+              
+              <p className="text-xs text-brand-grey2 mt-3">
+                We'll send you a magic link to sign in securely
+              </p>
+            </form>
+          )}
         </div>
         
         {/* Register Link */}
