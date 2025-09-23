@@ -38,7 +38,9 @@ export default function AdminDashboard() {
   useEffect(() => {
     console.log("Auth status:", status)
     console.log("Session:", session)
-    
+    console.log("Session user:", session?.user)
+    console.log("Session user role:", session?.user?.role)
+
     if (status === "unauthenticated") {
       console.log("User not authenticated, redirecting to admin login")
       router.push("/admin/login")
