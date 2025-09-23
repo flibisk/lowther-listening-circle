@@ -24,11 +24,19 @@ export default function Home() {
     setIsLoading(true)
     
     try {
-      await signIn('email', { 
-        email, 
-        redirect: false 
+      // Check approval first
+      const res = await fetch('/api/auth/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
       })
-      // Show success message or redirect
+      const data = await res.json()
+      if (res.ok && (!data.exists || !data.isApproved)) {
+        alert('This email is not approved yet. Please apply to join on the registration page.')
+        return
+      }
+
+      await signIn('email', { email, redirect: false })
     } catch (error) {
       console.error('Sign in error:', error)
     } finally {

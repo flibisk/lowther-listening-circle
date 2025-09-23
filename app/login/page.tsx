@@ -24,6 +24,18 @@ export default function Page() {
     setMessage("")
 
     try {
+      // Check approval status first
+      const checkRes = await fetch('/api/auth/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      const check = await checkRes.json()
+      if (checkRes.ok && (!check.exists || !check.isApproved)) {
+        setMessage("This email is not approved yet. Please apply to join the Listening Circle ")
+        return
+      }
+
       const result = await signIn("email", {
         email,
         redirect: false,
@@ -106,6 +118,11 @@ export default function Page() {
                 : "bg-red-500/20 border border-red-500/30 text-red-300"
             }`}>
               {message}
+              {message && message.toLowerCase().includes('not approved') && (
+                <>
+                  <a href="/register" className="underline ml-1 text-brand-light">here</a>.
+                </>
+              )}
             </div>
           )}
         </div>
