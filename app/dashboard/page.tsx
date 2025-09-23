@@ -8,12 +8,23 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [copied, setCopied] = useState<string | null>(null)
+  const [stats, setStats] = useState({ clicks: 0, orders: 0, earnings: 0 })
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login")
     }
   }, [status, router])
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      // Fetch user stats
+      fetch(`/api/user/${session.user.id}/stats`)
+        .then(res => res.json())
+        .then(data => setStats(data))
+        .catch(err => console.error('Error fetching stats:', err))
+    }
+  }, [session])
 
   const copyToClipboard = async (text: string, type: string) => {
     try {
@@ -59,15 +70,15 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Clicks</div>
-          <div className="text-2xl font-heading">0</div>
+          <div className="text-2xl font-heading">{stats.clicks}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Orders</div>
-          <div className="text-2xl font-heading">0</div>
+          <div className="text-2xl font-heading">{stats.orders}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Earnings</div>
-          <div className="text-2xl font-heading">£0.00</div>
+          <div className="text-2xl font-heading">£{stats.earnings.toFixed(2)}</div>
         </div>
       </div>
 
