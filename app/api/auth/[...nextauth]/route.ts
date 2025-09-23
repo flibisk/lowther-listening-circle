@@ -49,7 +49,11 @@ const handler = NextAuth({
   },
   callbacks: {
     async session({ session, user }) {
-      if (user) session.user.id = user.id
+      if (user) {
+        session.user.id = user.id
+        session.user.refCode = user.refCode
+        session.user.discountCode = user.discountCode
+      }
       return session
     },
     async redirect({ url, baseUrl }) {
