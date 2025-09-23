@@ -84,9 +84,12 @@ export default function AdminDashboard() {
       if (Array.isArray(data)) {
         console.log("Setting users:", data)
         console.log("Number of users:", data.length)
+        console.log("First user:", data[0])
         setUsers(data)
       } else {
         console.error("Expected array but got:", data)
+        console.error("Data type:", typeof data)
+        console.error("Data keys:", Object.keys(data || {}))
         setUsers([])
       }
     } catch (error) {
@@ -221,6 +224,9 @@ export default function AdminDashboard() {
       <div className="bg-white rounded-2xl border overflow-hidden">
         <div className="px-6 py-4 border-b">
           <h2 className="font-heading text-xl">All Referrers</h2>
+          <div className="text-sm text-gray-500 mt-2">
+            Debug: Users array length: {Array.isArray(users) ? users.length : 'Not an array'}, Loading: {loading.toString()}
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -238,7 +244,26 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {Array.isArray(users) && users.map((user) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={9} className="px-6 py-4 text-center text-gray-500">
+                    Loading users...
+                  </td>
+                </tr>
+              ) : !Array.isArray(users) ? (
+                <tr>
+                  <td colSpan={9} className="px-6 py-4 text-center text-red-500">
+                    Error: Users data is not an array
+                  </td>
+                </tr>
+              ) : users.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="px-6 py-4 text-center text-gray-500">
+                    No users found
+                  </td>
+                </tr>
+              ) : (
+                users.map((user) => (
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
@@ -297,7 +322,8 @@ export default function AdminDashboard() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
