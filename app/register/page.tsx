@@ -26,7 +26,20 @@ export default function Page() {
     setIsLoading(true)
     setMessage("")
 
-    try {
+      try {
+        // Collect application answers
+        const application = {
+          discover: (document.getElementById('discover') as HTMLTextAreaElement)?.value || "",
+          ownership: (document.getElementById('ownership') as HTMLTextAreaElement)?.value || "",
+          setup: (document.getElementById('setup') as HTMLTextAreaElement)?.value || "",
+          sharedBefore: (document.getElementById('sharedBefore') as HTMLTextAreaElement)?.value || "",
+          hostInterest: (document.getElementById('hostInterest') as HTMLSelectElement)?.value || "",
+          contribution: (document.getElementById('contribution') as HTMLTextAreaElement)?.value || "",
+          supportLevel: (document.getElementById('supportLevel') as HTMLSelectElement)?.value || "",
+          availability: (document.getElementById('availability') as HTMLInputElement)?.value || "",
+          roleIntent: (document.getElementById('roleIntent') as HTMLSelectElement)?.value || "",
+          anythingElse: (document.getElementById('anythingElse') as HTMLTextAreaElement)?.value || ""
+        }
       // First, create the user with additional information
       const response = await fetch("/api/auth/register", {
         method: "POST",
@@ -38,6 +51,7 @@ export default function Page() {
           fullName,
           address,
           location,
+          application,
         }),
       })
 
@@ -77,7 +91,7 @@ export default function Page() {
         
         {/* Subtitle */}
         <p className="text-brand-grey2 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
-          Create your account and start earning commissions through our exclusive referral program
+          The Listening Circle is a private space for those who share our values. Your answers below help us understand how best to welcome you — as an Ambassador, an Advocate, or in another role.
         </p>
         
         {/* Registration Form */}
@@ -116,23 +130,8 @@ export default function Page() {
             </div>
 
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-brand-grey2 mb-2">
-                Address
-              </label>
-              <textarea
-                id="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                required
-                rows={3}
-                className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300 resize-none"
-                placeholder="123 Main Street, City, State, ZIP"
-              />
-            </div>
-
-            <div>
               <label htmlFor="location" className="block text-sm font-medium text-brand-grey2 mb-2">
-                Location
+                Country of residence / City
               </label>
               <input
                 type="text"
@@ -144,7 +143,63 @@ export default function Page() {
                 placeholder="London, UK"
               />
             </div>
-            
+
+            {/* Section 2 */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-lg text-brand-light">Your connection to music & Lowther</h3>
+              <textarea id="discover" placeholder="How did you first discover Lowther?" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300" rows={3} />
+              <textarea id="ownership" placeholder="Do you currently own any Lowther loudspeakers or drive units? (If yes, which models?)" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300" rows={3} />
+              <textarea id="setup" placeholder="What other audio equipment forms part of your listening setup?" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300" rows={3} />
+            </div>
+
+            {/* Section 3 */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-lg text-brand-light">Your experience & community</h3>
+              <textarea id="sharedBefore" placeholder="Have you shared Lowther with others before?" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300" rows={3} />
+              <div>
+                <label className="block text-sm font-medium text-brand-grey2 mb-2">Would you host private listening events or demonstrations?</label>
+                <select id="hostInterest" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light focus:outline-none focus:ring-2 focus:ring-brand-gold">
+                  <option>Yes</option>
+                  <option>Possibly</option>
+                  <option>Not at this stage</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Section 4 */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-lg text-brand-light">Your role in the Circle</h3>
+              <textarea id="contribution" placeholder="How do you see yourself contributing to the Listening Circle?" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300" rows={3} />
+              <div>
+                <label className="block text-sm font-medium text-brand-grey2 mb-2">How much support would you like from Lowther?</label>
+                <select id="supportLevel" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light focus:outline-none focus:ring-2 focus:ring-brand-gold">
+                  <option>Minimal (I am confident presenting Lowther to others)</option>
+                  <option>Some (materials, guidance and occasional help)</option>
+                  <option>Significant (more structured support and training)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Section 5 */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-lg text-brand-light">Your availability & intentions</h3>
+              <input id="availability" placeholder="How much time can you dedicate each month?" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300" />
+              <div>
+                <label className="block text-sm font-medium text-brand-grey2 mb-2">Do you see yourself as…</label>
+                <select id="roleIntent" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light focus:outline-none focus:ring-2 focus:ring-brand-gold">
+                  <option>Ambassador</option>
+                  <option>Advocate</option>
+                  <option>Not sure yet</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Section 6 */}
+            <div className="space-y-2">
+              <h3 className="font-heading text-lg text-brand-light">Anything else</h3>
+              <textarea id="anythingElse" placeholder="Tell us anything else you'd like us to know" className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300" rows={4} />
+            </div>
+ 
             <button
               type="submit"
               disabled={isLoading}

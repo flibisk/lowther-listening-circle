@@ -51,6 +51,7 @@ model User {
   fullName      String?
   address       String?
   location      String?
+  application   Json?
   role          Role      @default(MEMBER)
   tier          Tier      @default(ADVOCATE)
   refCode       String    @unique @default(cuid())

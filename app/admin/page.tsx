@@ -11,6 +11,7 @@ interface User {
   fullName?: string
   address?: string
   location?: string
+  application?: any
   refCode: string
   discountCode?: string
   role: string
@@ -301,9 +302,11 @@ export default function AdminDashboard() {
               ) : (
                 users.map((user) => (
                 <tr key={user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                 <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{user.fullName || user.name || user.email}</div>
+                     <div className="text-sm font-medium text-gray-900">
+                       <a href={`/admin/users/${user.id}`} className="underline hover:text-brand-light">{user.fullName || user.name || user.email}</a>
+                     </div>
                       <div className="text-sm text-gray-500">{user.email}</div>
                       <div className="text-xs text-gray-400">Ref: {user.refCode}</div>
                     </div>

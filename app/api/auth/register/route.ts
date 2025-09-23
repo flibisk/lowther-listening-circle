@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, fullName, address, location } = await request.json()
+    const { email, fullName, address, location, application } = await request.json()
 
     // Validate required fields
     if (!email || !fullName || !address || !location) {
@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
         fullName,
         address,
         location,
+        application: application ?? undefined,
         role: "MEMBER",
         tier: "ADVOCATE",
         isApproved: false, // Requires admin approval
