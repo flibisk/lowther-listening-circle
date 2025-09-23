@@ -211,15 +211,15 @@ export default function Page() {
                   Creating Account...
                 </div>
               ) : (
-                "Create Account & Send Magic Link"
+                "Submit Application"
               )}
             </button>
           </form>
 
           {message && (
             <div className={`mt-6 p-4 rounded-xl ${
-              message.includes("Check your email") 
-                ? "bg-green-500/20 border border-green-500/30 text-green-300" 
+              message.includes("Your application has been received")
+                ? "bg-green-500/20 border border-green-500/30 text-green-300"
                 : "bg-red-500/20 border border-red-500/30 text-red-300"
             }`}>
               {message}

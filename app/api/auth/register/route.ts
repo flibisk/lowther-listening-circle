@@ -5,10 +5,10 @@ export async function POST(request: NextRequest) {
   try {
     const { email, fullName, address, location, application } = await request.json()
 
-    // Validate required fields
-    if (!email || !fullName || !address || !location) {
+    // Validate required fields (address optional)
+    if (!email || !fullName || !location) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "Please provide your full name, email, and location" },
         { status: 400 }
       )
     }
@@ -31,9 +31,9 @@ export async function POST(request: NextRequest) {
         email,
         name: fullName,
         fullName,
-        address,
+        address: address || undefined,
         location,
-        application: application ?? undefined,
+        application: application || undefined,
         role: "MEMBER",
         tier: "ADVOCATE",
         isApproved: false, // Requires admin approval
