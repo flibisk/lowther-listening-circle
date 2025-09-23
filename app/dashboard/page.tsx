@@ -70,15 +70,15 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Clicks</div>
-          <div className="text-2xl font-heading">{stats.clicks}</div>
+          <div className="text-2xl font-heading">{stats.clicks || 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Orders</div>
-          <div className="text-2xl font-heading">{stats.orders}</div>
+          <div className="text-2xl font-heading">{stats.orders || 0}</div>
         </div>
         <div className="p-6 border rounded-2xl">
           <div className="text-sm text-brand-grey2">Earnings</div>
-          <div className="text-2xl font-heading">£{stats.earnings.toFixed(2)}</div>
+          <div className="text-2xl font-heading">£{(stats.earnings || 0).toFixed(2)}</div>
         </div>
       </div>
 
