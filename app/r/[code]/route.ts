@@ -5,13 +5,18 @@ import { getClientIp, sha256 } from '@/lib/attribution'
 export async function GET(request: NextRequest, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params
   
+  console.log('Referral link clicked:', code)
+  
   try {
     // Find the user with this referral code
     const user = await prisma.user.findUnique({
       where: { refCode: code }
     })
 
+    console.log('User found:', user ? user.id : 'Not found')
+
     if (!user) {
+      console.log('No user found for refCode:', code)
       // If referral code doesn't exist, redirect without tracking
       return NextResponse.redirect('https://shop.lowtherloudspeakers.com', { status: 302 })
     }
@@ -21,8 +26,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const ip = getClientIp(request)
     const ipHash = sha256(ip)
 
+    console.log('Recording click for user:', user.id)
+
     // Record the click
-    await prisma.click.create({
+    const click = await prisma.click.create({
       data: {
         userId: user.id,
         url: 'https://shop.lowtherloudspeakers.com',
@@ -30,6 +37,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         userAgent
       }
     })
+
+    console.log('Click recorded:', click.id)
 
     // Redirect to shop with affiliate tracking
     const res = NextResponse.redirect('https://shop.lowtherloudspeakers.com', { status: 302 })

@@ -7,6 +7,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log('Stats API called for user:', params.id)
+    
     const session = await getServerSession()
     
     if (!session?.user?.id) {
@@ -39,6 +41,8 @@ export async function GET(
     ])
 
     const totalEarnings = earnings._sum.amount || 0
+
+    console.log('Stats for user', params.id, ':', { clicks, orders, earnings: Number(totalEarnings) })
 
     return NextResponse.json({
       clicks,
