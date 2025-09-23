@@ -3,6 +3,7 @@ import localFont from 'next/font/local'
 import { Sarabun } from 'next/font/google'
 import Link from 'next/link'
 import { Providers } from '@/components/providers'
+import { CookieConsent } from '@/components/cookie-consent'
 import { Navigation } from '@/components/navigation'
 
 const hvMuse = localFont({ 
@@ -36,7 +37,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </header>
           <main>{children}</main>
-          <footer className="mt-16 py-10 border-t border-brand-haze text-center text-sm text-brand-grey2">© Lowther Listening Circle</footer>
+          <footer className="mt-16 py-10 border-t border-brand-haze text-center text-sm text-brand-grey2">
+            <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div>© Lowther Listening Circle</div>
+              <div className="flex items-center gap-4">
+                <Link href="/privacy" className="hover:text-brand-light">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-brand-light">Terms & Conditions</Link>
+                <Link href="/cookies" className="hover:text-brand-light">Cookie Policy</Link>
+              </div>
+            </div>
+          </footer>
+          <CookieConsent />
         </Providers>
       </body>
     </html>
