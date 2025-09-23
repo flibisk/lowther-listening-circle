@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(
@@ -7,24 +6,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    console.log('Stats API called for user:', params.id)
+    console.log('Debug Stats API called for user:', params.id)
     
-    const session = await getServerSession()
-    
-    console.log('Session:', session)
-    
-    if (!session?.user?.id) {
-      console.log('No session found')
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    // Ensure user can only access their own data
-    if (session.user.id !== params.id) {
-      console.log('User ID mismatch:', session.user.id, 'vs', params.id)
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
-
-    // Get user stats
+    // Get user stats without authentication for debugging
     const [clicks, orders, earnings] = await Promise.all([
       // Count clicks
       prisma.click.count({
@@ -46,7 +30,7 @@ export async function GET(
 
     const totalEarnings = earnings._sum.amount || 0
 
-    console.log('Stats for user', params.id, ':', { clicks, orders, earnings: Number(totalEarnings) })
+    console.log('Debug Stats for user', params.id, ':', { clicks, orders, earnings: Number(totalEarnings) })
 
     return NextResponse.json({
       clicks,

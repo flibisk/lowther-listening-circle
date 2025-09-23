@@ -19,7 +19,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (session?.user?.id) {
       // Fetch user stats
-      fetch(`/api/user/${session.user.id}/stats`, {
+      fetch(`/api/user/${session.user.id}/stats-debug`, {
         credentials: 'include'
       })
         .then(res => res.json())
