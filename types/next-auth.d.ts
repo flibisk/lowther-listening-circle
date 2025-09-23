@@ -13,3 +13,13 @@ declare module "next-auth" {
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    refCode: string;
+    discountCode?: string | null;
+    role: string;
+    tier: string;
+  }
+}
+

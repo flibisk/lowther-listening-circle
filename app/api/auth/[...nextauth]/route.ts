@@ -109,21 +109,31 @@ const handler = NextAuth({
       }
     })
   ],
-  session: { strategy: 'database' },
+  session: { strategy: 'jwt' },
   pages: {
     signIn: '/login',
     error: '/login',
   },
   callbacks: {
-    async session({ session, user }) {
-      if (user) {
-        session.user.id = user.id
-        session.user.refCode = user.refCode
-        session.user.discountCode = user.discountCode
-        session.user.role = user.role
-        session.user.tier = user.tier
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string
+        session.user.refCode = token.refCode as string
+        session.user.discountCode = token.discountCode as string
+        session.user.role = token.role as string
+        session.user.tier = token.tier as string
       }
       return session
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.refCode = user.refCode
+        token.discountCode = user.discountCode
+        token.role = user.role
+        token.tier = user.tier
+      }
+      return token
     },
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
