@@ -46,7 +46,9 @@ export async function POST(
     })
 
     // Generate a one-time NextAuth magic link by inserting a VerificationToken
-    const baseUrl = process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    // Prefer the request origin to avoid mismatched domain during local/dev usage
+    const requestOrigin = request.headers.get('origin') || undefined
+    const baseUrl = requestOrigin || process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
     let magicUrl = `${baseUrl}/login`
     try {
       const token = crypto.randomBytes(32).toString('hex')

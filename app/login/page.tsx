@@ -72,7 +72,7 @@ export default function Page() {
         
         {/* Subtitle */}
         <p className="text-brand-grey2 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
-          Sign in to your Listening Circle account and continue earning commissions
+          Access your Listening Circle account to share Lowther with others and enjoy the rewards of membership.
         </p>
         
         {/* Login Form */}

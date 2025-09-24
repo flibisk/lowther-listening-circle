@@ -2,7 +2,7 @@
 
 import { signIn, useSession } from "next-auth/react"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 
 export default function Page() {
@@ -14,6 +14,8 @@ export default function Page() {
   const [message, setMessage] = useState("")
   const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const ambassadorCode = searchParams.get('ambassador')
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -52,6 +54,7 @@ export default function Page() {
           address,
           location,
           application,
+          ambassadorCode
         }),
       })
 
@@ -74,7 +77,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-dark via-brand-primary to-brand-haze flex items-center justify-center">
-      <div className="text-center max-w-4xl mx-auto px-6">
+      <div className="text-center max-w-4xl mx-auto px-6 pt-16">
         {/* Listening Circle Image */}
         <div className="mb-8">
           <img 

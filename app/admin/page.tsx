@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { TierBadge } from "@/components/TierBadge"
 
 interface User {
   id: string
@@ -215,87 +216,82 @@ export default function AdminDashboard() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
+    <section className="mx-auto max-w-6xl px-6 py-12 text-brand-light">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="font-heading text-3xl">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Manage all referrers and their tiers</p>
+          <p className="text-brand-grey2 mt-1">Manage all referrers and their tiers</p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">Welcome, {session.user?.email}</span>
-                 <button
-                   onClick={() => signOut({ callbackUrl: '/admin/login' })}
-                   className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                 >
-                   Sign Out
-                 </button>
+          <span className="text-sm text-brand-grey2">Welcome, {session.user?.email}</span>
+          {/* Sign Out button removed; use top navigation */}
         </div>
       </div>
 
       {/* Stats Overview */}
       <div className="grid md:grid-cols-5 gap-6 mb-8">
-        <div className="p-6 border rounded-2xl">
+        <div className="p-6 border border-brand-gold/20 bg-brand-primary/70 rounded-2xl">
           <div className="text-sm text-brand-grey2">Total Users</div>
           <div className="text-2xl font-heading">{Array.isArray(users) ? users.length : 0}</div>
         </div>
-        <div className="p-6 border rounded-2xl">
+        <div className="p-6 border border-brand-gold/20 bg-brand-primary/70 rounded-2xl">
           <div className="text-sm text-brand-grey2">Pending Approval</div>
-          <div className="text-2xl font-heading text-orange-600">{Array.isArray(users) ? users.filter(u => !u.isApproved).length : 0}</div>
+          <div className="text-2xl font-heading text-brand-gold">{Array.isArray(users) ? users.filter(u => !u.isApproved).length : 0}</div>
         </div>
-        <div className="p-6 border rounded-2xl">
+        <div className="p-6 border border-brand-gold/20 bg-brand-primary/70 rounded-2xl">
           <div className="text-sm text-brand-grey2">Advocates</div>
           <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "ADVOCATE" && u.isApproved).length : 0}</div>
         </div>
-        <div className="p-6 border rounded-2xl">
+        <div className="p-6 border border-brand-gold/20 bg-brand-primary/70 rounded-2xl">
           <div className="text-sm text-brand-grey2">Ambassadors</div>
           <div className="text-2xl font-heading">{Array.isArray(users) ? users.filter(u => u.tier === "AMBASSADOR" && u.isApproved).length : 0}</div>
         </div>
-        <div className="p-6 border rounded-2xl">
+        <div className="p-6 border border-brand-gold/20 bg-brand-primary/70 rounded-2xl">
           <div className="text-sm text-brand-grey2">Total Sales</div>
           <div className="text-2xl font-heading">£{Array.isArray(users) ? users.reduce((sum, u) => sum + u.totalSales, 0).toLocaleString() : 0}</div>
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-2xl border overflow-hidden">
-        <div className="px-6 py-4 border-b">
-          <h2 className="font-heading text-xl">All Referrers</h2>
-          <div className="text-sm text-gray-500 mt-2">
+      <div className="bg-brand-primary/80 rounded-2xl border border-brand-gold/30 overflow-hidden">
+        <div className="px-6 py-4 border-b border-brand-gold/20">
+          <h2 className="font-heading text-xl text-brand-light">All Referrers</h2>
+          <div className="text-sm text-brand-grey2 mt-2">
             Debug: Users array length: {Array.isArray(users) ? users.length : 'Not an array'}, Loading: {loading.toString()}
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-brand-haze/60">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tier</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clicks</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
-                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sales</th>
-                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Earnings</th>
-                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pending</th>
-                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Tier</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Location</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Clicks</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Orders</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Sales</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Earnings</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Pending</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-brand-grey2 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-brand-haze/50">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={9} className="px-6 py-4 text-center text-brand-grey2">
                     Loading users...
                   </td>
                 </tr>
               ) : !Array.isArray(users) ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-4 text-center text-red-500">
+                  <td colSpan={9} className="px-6 py-4 text-center text-red-400">
                     Error: Users data is not an array
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={9} className="px-6 py-4 text-center text-brand-grey2">
                     No users found
                   </td>
                 </tr>
@@ -304,45 +300,39 @@ export default function AdminDashboard() {
                 <tr key={user.id}>
                  <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                     <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-brand-light">
                        <a href={`/admin/users/${user.id}`} className="underline hover:text-brand-light">{user.fullName || user.name || user.email}</a>
                      </div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                      <div className="text-xs text-gray-400">Ref: {user.refCode}</div>
+                     <div className="text-sm text-brand-grey2">{user.email}</div>
+                     <div className="text-xs text-brand-grey2">Ref: {user.refCode}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       user.isApproved 
-                        ? "bg-green-100 text-green-800" 
-                        : "bg-orange-100 text-orange-800"
+                        ? "bg-green-600/20 text-green-300 border border-green-600/30" 
+                        : "bg-orange-600/20 text-orange-300 border border-orange-600/30"
                     }`}>
                       {user.isApproved ? "Approved" : "Pending"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      user.tier === "AMBASSADOR" 
-                        ? "bg-purple-100 text-purple-800" 
-                        : "bg-blue-100 text-blue-800"
-                    }`}>
-                      {user.tier}
-                    </span>
+                    <TierBadge tier={user.tier as "ADVOCATE" | "AMBASSADOR"} />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.location || "N/A"}</td>
-                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.clicks}</td>
-                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.orders}</td>
-                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.totalSales.toLocaleString()}</td>
-                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">£{user.earnings.toFixed(2)}</td>
-                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-light">{user.location || "N/A"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-light">{user.clicks}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-light">{user.orders}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-light">£{user.totalSales.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-light">£{user.earnings.toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-light">
                            <div className="flex items-center gap-2">
-                             <span className={`${user.pendingCommission > 0 ? 'text-orange-600 font-medium' : 'text-gray-500'}`}>
+                            <span className={`${user.pendingCommission > 0 ? 'text-brand-gold font-medium' : 'text-brand-grey2'}`}>
                                £{user.pendingCommission.toFixed(2)}
                              </span>
                              {user.pendingCommission > 0 && (
                                <button
-                                 onClick={() => { setSelectedUser(user); setPaymentAmount(user.pendingCommission.toString()); setShowPaymentModal(true); }}
-                                 className="text-blue-600 hover:text-blue-900 text-xs px-2 py-1 border border-blue-300 rounded"
+                                onClick={() => { setSelectedUser(user); setPaymentAmount(user.pendingCommission.toString()); setShowPaymentModal(true); }}
+                                className="text-brand-light text-xs px-2 py-1 border border-brand-gold/40 rounded hover:bg-brand-gold/10"
                                >
                                  Pay
                                </button>
@@ -353,8 +343,8 @@ export default function AdminDashboard() {
                            <div className="flex gap-2">
                              {!user.isApproved && (
                                <button
-                                 onClick={() => { setSelectedUser(user); setShowApprovalModal(true); }}
-                                 className="text-green-600 hover:text-green-900"
+                                onClick={() => { setSelectedUser(user); setShowApprovalModal(true); }}
+                                className="text-green-300 hover:text-green-200"
                                >
                                  Approve
                                </button>
@@ -362,14 +352,14 @@ export default function AdminDashboard() {
                              <select
                                value={user.tier}
                                onChange={(e) => changeTier(user.id, e.target.value)}
-                               className="text-sm border rounded px-2 py-1"
+                              className="text-sm border border-brand-gold/30 bg-brand-haze/50 text-brand-light rounded px-2 py-1"
                              >
                                <option value="ADVOCATE">Advocate</option>
                                <option value="AMBASSADOR">Ambassador</option>
                              </select>
                              <button
                                onClick={() => deleteUser(user.id)}
-                               className="text-red-600 hover:text-red-900"
+                              className="text-red-300 hover:text-red-200"
                              >
                                Delete
                              </button>
@@ -384,26 +374,26 @@ export default function AdminDashboard() {
       </div>
 
              {/* Approval Modal */}
-             {showApprovalModal && selectedUser && (
-               <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-                 <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
-                   <h3 className="font-heading text-xl mb-4">Approve User</h3>
+            {showApprovalModal && selectedUser && (
+              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                <div className="bg-brand-primary/90 border border-brand-gold/30 p-8 rounded-2xl shadow-2xl max-w-md w-full text-brand-light">
+                  <h3 className="font-heading text-xl mb-4 text-brand-gold">Approve User</h3>
                    <div className="mb-4">
                      <p className="font-medium">{selectedUser.fullName || selectedUser.name || selectedUser.email}</p>
-                     <p className="text-sm text-gray-600">{selectedUser.email}</p>
-                     <p className="text-sm text-gray-600">{selectedUser.location}</p>
+                    <p className="text-sm text-brand-grey2">{selectedUser.email}</p>
+                    <p className="text-sm text-brand-grey2">{selectedUser.location}</p>
                    </div>
-                   <p className="mb-6">Are you sure you want to approve this user? They will be able to access their dashboard and start earning commissions.</p>
+                  <p className="mb-6 text-brand-grey2">Are you sure you want to approve this user? They will be able to access their dashboard and start earning commissions.</p>
                    <div className="flex justify-end space-x-4">
                      <button
-                       onClick={() => setShowApprovalModal(false)}
-                       className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
+                      onClick={() => setShowApprovalModal(false)}
+                      className="btn-lowther"
                      >
                        Cancel
                      </button>
                      <button
-                       onClick={() => approveUser(selectedUser.id)}
-                       className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                      onClick={() => approveUser(selectedUser.id)}
+                      className="btn-lowther"
                      >
                        Approve
                      </button>
@@ -413,17 +403,17 @@ export default function AdminDashboard() {
              )}
 
              {/* Payment Modal */}
-             {showPaymentModal && selectedUser && (
-               <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-                 <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
-                   <h3 className="font-heading text-xl mb-4">Pay Commission</h3>
+            {showPaymentModal && selectedUser && (
+              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                <div className="bg-brand-primary/90 border border-brand-gold/30 p-8 rounded-2xl shadow-2xl max-w-md w-full text-brand-light">
+                  <h3 className="font-heading text-xl mb-4 text-brand-gold">Pay Commission</h3>
                    <div className="mb-4">
                      <p className="font-medium">{selectedUser.fullName || selectedUser.name || selectedUser.email}</p>
-                     <p className="text-sm text-gray-600">{selectedUser.email}</p>
-                     <p className="text-sm text-gray-600">Pending Commission: £{selectedUser.pendingCommission.toFixed(2)}</p>
+                    <p className="text-sm text-brand-grey2">{selectedUser.email}</p>
+                    <p className="text-sm text-brand-grey2">Pending Commission: £{selectedUser.pendingCommission.toFixed(2)}</p>
                    </div>
                    <div className="mb-6">
-                     <label htmlFor="paymentAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="paymentAmount" className="block text-sm font-medium text-brand-grey2 mb-2">
                        Payment Amount (£)
                      </label>
                      <input
@@ -434,14 +424,14 @@ export default function AdminDashboard() {
                        step="0.01"
                        min="0"
                        max={selectedUser.pendingCommission}
-                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300"
                        placeholder="0.00"
                      />
                    </div>
                    <div className="flex justify-end space-x-4">
                      <button
-                       onClick={() => { setShowPaymentModal(false); setPaymentAmount(""); }}
-                       className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
+                      onClick={() => { setShowPaymentModal(false); setPaymentAmount(""); }}
+                      className="btn-lowther"
                      >
                        Cancel
                      </button>
@@ -454,7 +444,7 @@ export default function AdminDashboard() {
                            alert("Please enter a valid amount between £0.01 and £" + selectedUser.pendingCommission.toFixed(2))
                          }
                        }}
-                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                      className="btn-lowther"
                      >
                        Process Payment
                      </button>

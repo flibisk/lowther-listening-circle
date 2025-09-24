@@ -4,8 +4,10 @@ import { getClientIp, sha256 } from '@/lib/attribution'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params
+  const { searchParams } = new URL(request.url)
+  const ambassador = searchParams.get('ambassador')
   
-  console.log('Referral link clicked:', code)
+  console.log('Referral link clicked:', code, 'ambassador:', ambassador)
   
   try {
     // Find the user with this referral code
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const click = await prisma.click.create({
       data: {
         userId: user.id,
-        url: 'https://shop.lowtherloudspeakers.com',
+        url: ambassador ? '/register' : 'https://shop.lowtherloudspeakers.com',
         ipHash,
         userAgent
       }
@@ -40,7 +42,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     console.log('Click recorded:', click.id)
 
-    // Redirect to shop with affiliate tracking
+    // If this is an ambassador invite link, redirect to registration page
+    if (ambassador) {
+      const baseUrl = request.headers.get('origin') || process.env.NEXTAUTH_URL || 'http://localhost:3000'
+      const registerUrl = `${baseUrl}/register?ambassador=${code}`
+      const res = NextResponse.redirect(registerUrl, { status: 302 })
+      res.cookies.set('aff_id', code, { httpOnly: true, sameSite: 'lax', secure: true, path: '/' })
+      return res
+    }
+
+    // Regular referral link - redirect to shop with affiliate tracking
     const res = NextResponse.redirect('https://shop.lowtherloudspeakers.com', { status: 302 })
     res.cookies.set('aff_id', code, { httpOnly: true, sameSite: 'lax', secure: true, path: '/' })
     

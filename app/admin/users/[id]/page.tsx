@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { UserActions } from "@/components/admin/UserActions"
+import { TierBadge } from "@/components/TierBadge"
 
 export default async function AdminUserProfile({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -24,7 +26,10 @@ export default async function AdminUserProfile({ params }: { params: Promise<{ i
     <section className="mx-auto max-w-5xl px-6 py-12">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-heading text-3xl">User Profile</h1>
-        <Link href="/admin" className="underline">Back to Admin</Link>
+        <div className="flex items-center gap-4">
+          <UserActions userId={user.id} isApproved={user.isApproved} tier={user.tier as any} />
+          <Link href="/admin" className="underline">Back to Admin</Link>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -35,7 +40,7 @@ export default async function AdminUserProfile({ params }: { params: Promise<{ i
             <div><strong>Email:</strong> {user.email}</div>
             <div><strong>Location:</strong> {user.location || "—"}</div>
             <div><strong>Address:</strong> {user.address || "—"}</div>
-            <div><strong>Tier:</strong> {user.tier}</div>
+            <div><strong>Tier:</strong> <TierBadge tier={user.tier as "ADVOCATE" | "AMBASSADOR"} /></div>
             <div><strong>Status:</strong> {user.isApproved ? "Approved" : "Pending"}</div>
             <div><strong>Ref code:</strong> {user.refCode}</div>
           </div>

@@ -24,7 +24,7 @@ export function Navigation() {
           </span>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="btn-lowther"
+            className="btn-lowther btn-lowther--sm"
           >
             Sign Out
           </button>

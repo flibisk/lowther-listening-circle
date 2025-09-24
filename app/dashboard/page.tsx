@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { TierBadge } from "@/components/TierBadge"
 
 interface Advocate {
   id: string;
@@ -17,7 +18,8 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [copied, setCopied] = useState<string | null>(null)
-  const [stats, setStats] = useState({ clicks: 0, orders: 0, earnings: 0, pendingCommission: 0, totalSales: 0 })
+  const [stats, setStats] = useState({ clicks: 0, orders: 0, earnings: 0, pendingCommission: 0, totalSales: 0, advocateSales: 0, advocateCommission: 0, range: 'lifetime' as '30d' | 'lifetime' })
+  const [range, setRange] = useState<'30d' | 'lifetime'>('30d')
   const [advocates, setAdvocates] = useState<Advocate[]>([])
 
   useEffect(() => {
@@ -27,9 +29,9 @@ export default function Dashboard() {
   }, [status, router])
 
   useEffect(() => {
-    if (session?.user?.id) {
+      if (session?.user?.id) {
       // Fetch user stats
-      fetch(`/api/user/${session.user.id}/stats-debug`, {
+        fetch(`/api/user/${session.user.id}/stats-debug?range=${range}`, {
         credentials: 'include'
       })
         .then(res => res.json())
@@ -51,8 +53,8 @@ export default function Dashboard() {
           })
           .catch(err => console.error('Error fetching advocates:', err))
       }
-    }
-  }, [session])
+      }
+    }, [session, range])
 
   const copyToClipboard = async (text: string, type: string) => {
     try {
@@ -91,12 +93,7 @@ export default function Dashboard() {
             <h1 className="font-heading text-4xl md:text-5xl text-brand-light mb-2">Dashboard</h1>
             <p className="text-brand-grey2">Welcome back, {session.user?.email}</p>
           </div>
-          <button
-            onClick={() => signOut({ callbackUrl: '/' })}
-            className="btn-lowther"
-          >
-            Sign Out
-          </button>
+          {/* Sign Out button removed; use top navigation */}
         </div>
 
         {/* Tier Status */}
@@ -123,30 +120,46 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-              ) : (
-                <div>
-                  <p className="text-brand-grey2 mb-4 text-lg">You're an Ambassador earning 15% commission + 5% from your Advocates</p>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="bg-brand-haze/50 rounded-2xl p-6 border border-brand-gold/20">
-                      <div className="text-brand-grey2 mb-2">Your Advocates</div>
-                      <div className="text-3xl font-heading text-brand-light">{advocates.length}</div>
-                    </div>
-                    <div className="bg-brand-haze/50 rounded-2xl p-6 border border-brand-gold/20">
-                      <div className="text-brand-grey2 mb-2">Advocate Earnings</div>
-                      <div className="text-3xl font-heading text-brand-light">£{advocates.reduce((sum, a) => sum + (a.earnings || 0), 0).toFixed(2)}</div>
-                    </div>
-                  </div>
-                </div>
-              )}
+                     ) : (
+                       <div>
+                         <p className="text-brand-grey2 mb-4 text-lg">You're an Ambassador earning 15% commission + 5% from your Advocates</p>
+                     <div className="flex items-center gap-3 mb-4">
+                       <div className="text-brand-grey2">View metrics for:</div>
+                       <div className="inline-flex rounded-xl overflow-hidden border border-brand-gold/30">
+                         <button
+                           className={`px-3 py-1 text-xs tracking-wider ${range === '30d' ? 'bg-brand-gold text-black' : 'bg-transparent text-brand-light'}`}
+                           onClick={() => setRange('30d')}
+                         >
+                           Last 30 days
+                         </button>
+                         <button
+                           className={`px-3 py-1 text-xs tracking-wider ${range === 'lifetime' ? 'bg-brand-gold text-black' : 'bg-transparent text-brand-light'}`}
+                           onClick={() => setRange('lifetime')}
+                         >
+                           Lifetime
+                         </button>
+                       </div>
+                     </div>
+
+                     <div className="grid grid-cols-3 gap-6">
+                           <div className="bg-brand-haze/50 rounded-2xl p-6 border border-brand-gold/20">
+                             <div className="text-brand-grey2 mb-2">Your Advocates</div>
+                             <div className="text-3xl font-heading text-brand-light">{advocates.length}</div>
+                           </div>
+                           <div className="bg-brand-haze/50 rounded-2xl p-6 border border-brand-gold/20">
+                         <div className="text-brand-grey2 mb-2">Advocate Sales ({stats.range === '30d' ? '30d' : 'Lifetime'})</div>
+                             <div className="text-3xl font-heading text-brand-light">£{(stats.advocateSales || 0).toLocaleString()}</div>
+                           </div>
+                           <div className="bg-brand-haze/50 rounded-2xl p-6 border border-brand-gold/20">
+                         <div className="text-brand-grey2 mb-2">Your 5% Commission ({stats.range === '30d' ? '30d' : 'Lifetime'})</div>
+                             <div className="text-3xl font-heading text-brand-light">£{(stats.advocateCommission || 0).toFixed(2)}</div>
+                           </div>
+                         </div>
+                       </div>
+                     )}
             </div>
             <div className="text-right">
-              <div className={`inline-flex px-6 py-3 rounded-2xl text-lg font-semibold ${
-                session.user?.tier === "AMBASSADOR" 
-                  ? "bg-gradient-to-r from-purple-600 to-purple-700 text-white" 
-                  : "bg-gradient-to-r from-brand-gold to-brand-bronze text-brand-dark"
-              }`}>
-                {session.user?.tier}
-              </div>
+              <TierBadge tier={session.user?.tier as "ADVOCATE" | "AMBASSADOR"} />
             </div>
           </div>
         </div>
