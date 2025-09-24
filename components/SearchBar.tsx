@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 
 interface Article {
   id: number
@@ -36,7 +36,7 @@ export function SearchBar({ articles, onSearch }: SearchBarProps) {
   }, [articles, searchTerm])
 
   // Update parent component when filtered articles change
-  useMemo(() => {
+  useEffect(() => {
     onSearch(filteredArticles)
   }, [filteredArticles, onSearch])
 
