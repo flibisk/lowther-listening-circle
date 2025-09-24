@@ -5,22 +5,20 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("peter@lowtherloudspeakers.com")
-  const [password, setPassword] = useState("warpwarp")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
 
   useEffect(() => {
-    console.log("Admin login page loaded")
+    // Remove console log for security
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
-
-    console.log('Attempting to sign in with:', { email, password: '***' })
 
     try {
       const result = await signIn("credentials", {
@@ -29,18 +27,19 @@ export default function AdminLogin() {
         redirect: false,
       })
 
-      console.log('Sign in result:', result)
-
       if (result?.error) {
-        console.log('Sign in error:', result.error)
-        setError("Invalid email or password")
+        if (result.error === 'CredentialsSignin') {
+          setError("Invalid email or password")
+        } else if (result.error === 'RateLimitExceeded') {
+          setError("Too many login attempts. Please try again in 15 minutes.")
+        } else {
+          setError("Login failed. Please try again.")
+        }
       } else {
-        console.log('Sign in successful, redirecting...')
         // Force a page reload to ensure session is properly set
         window.location.href = "/admin"
       }
     } catch (error) {
-      console.error('Sign in error:', error)
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
@@ -54,13 +53,6 @@ export default function AdminLogin() {
           <img src="/listening-circle.png" alt="Lowther Listening Circle" className="mx-auto h-16 w-auto object-contain drop-shadow-2xl" />
           <h2 className="mt-6 font-heading text-3xl text-brand-light tracking-wide">Admin Sign In</h2>
           <p className="mt-2 text-sm text-brand-grey2">Lowther Listening Circle Admin Portal</p>
-          <div className="mt-4 p-4 bg-brand-primary/60 border border-brand-gold/30 rounded-xl text-left">
-            <p className="text-sm text-brand-light">
-              <span className="text-brand-gold font-semibold">Default credentials</span><br />
-              Email: peter@lowtherloudspeakers.com<br />
-              Password: warpwarp
-            </p>
-          </div>
         </div>
         <div className="bg-brand-primary/80 backdrop-blur-sm border border-brand-gold/30 rounded-3xl p-6 shadow-2xl">
           <form className="space-y-6" onSubmit={handleSubmit}>

@@ -5,6 +5,8 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import { Resend } from "resend"
+import bcrypt from "bcryptjs"
+import { checkRateLimit } from "@/lib/rate-limit"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const isProd = process.env.NODE_ENV === 'production'
@@ -62,60 +64,80 @@ export const authOptions: AuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!isProd) console.log('Credentials received:', { email: credentials?.email, password: credentials?.password ? '***' : 'missing' })
         
         if (!credentials?.email || !credentials?.password) {
           return null
         }
 
+        // Get client IP for rate limiting
+        const clientIp = req?.headers?.['x-forwarded-for'] || req?.headers?.['x-real-ip'] || 'unknown'
+        const ip = Array.isArray(clientIp) ? clientIp[0] : clientIp
+
+        // Check rate limit (5 attempts per 15 minutes)
+        if (!checkRateLimit(ip, 5, 15 * 60 * 1000)) {
+          console.warn(`Rate limit exceeded for IP: ${ip}`)
+          return null
+        }
+
         // Check if this is admin login
         const adminEmail = process.env.ADMIN_EMAIL || 'peter@lowtherloudspeakers.com'
-        const adminPassword = process.env.ADMIN_PASSWORD || 'warpwarp'
+        const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH
         
-        if (credentials.email === adminEmail && credentials.password === adminPassword) {
-          if (!isProd) console.log('Admin credentials match, looking up user...')
+        if (!adminPasswordHash) {
+          console.error('ADMIN_PASSWORD_HASH environment variable not set')
+          return null
+        }
+        
+        if (credentials.email === adminEmail) {
+          // Verify password using bcrypt
+          const isValidPassword = await bcrypt.compare(credentials.password, adminPasswordHash)
           
-          // Find or create admin user
-          let user = await prisma.user.findUnique({
-            where: { email: adminEmail }
-          })
-
-          if (!user) {
-            if (!isProd) console.log('Creating new admin user...')
-            user = await prisma.user.create({
-              data: {
-                email: adminEmail,
-                name: 'Admin',
-                role: 'ADMIN',
-                tier: 'AMBASSADOR',
-                isApproved: true,
-                approvedAt: new Date(),
-                refCode: 'LW-PETER',
-              }
+          if (isValidPassword) {
+            if (!isProd) console.log('Admin credentials match, looking up user...')
+            
+            // Find or create admin user
+            let user = await prisma.user.findUnique({
+              where: { email: adminEmail }
             })
-          } else if (user.role !== 'ADMIN') {
-            if (!isProd) console.log('Updating user role to ADMIN and approving...')
-            user = await prisma.user.update({
-              where: { id: user.id },
-              data: {
-                role: 'ADMIN',
-                tier: 'AMBASSADOR',
-                isApproved: true,
-                approvedAt: new Date(),
-              }
-            })
-          }
 
-          if (!isProd) console.log('Returning user:', { id: user.id, email: user.email, role: user.role })
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            refCode: user.refCode,
-            discountCode: user.discountCode,
-            role: user.role,
-            tier: user.tier,
+            if (!user) {
+              if (!isProd) console.log('Creating new admin user...')
+              user = await prisma.user.create({
+                data: {
+                  email: adminEmail,
+                  name: 'Admin',
+                  role: 'ADMIN',
+                  tier: 'AMBASSADOR',
+                  isApproved: true,
+                  approvedAt: new Date(),
+                  refCode: 'LW-PETER',
+                }
+              })
+            } else if (user.role !== 'ADMIN') {
+              if (!isProd) console.log('Updating user role to ADMIN and approving...')
+              user = await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                  role: 'ADMIN',
+                  tier: 'AMBASSADOR',
+                  isApproved: true,
+                  approvedAt: new Date(),
+                }
+              })
+            }
+
+            if (!isProd) console.log('Returning user:', { id: user.id, email: user.email, role: user.role })
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              refCode: user.refCode,
+              discountCode: user.discountCode,
+              role: user.role,
+              tier: user.tier,
+            }
           }
         }
 
