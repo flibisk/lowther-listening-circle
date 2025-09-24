@@ -592,6 +592,7 @@ export default function AdminDashboard() {
           </table>
         </div>
       </div>
+      )}
 
              {/* Approval Modal */}
             {showApprovalModal && selectedUser && (
