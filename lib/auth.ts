@@ -151,11 +151,12 @@ export const authOptions: AuthOptions = {
         console.log('JWT callback - token:', token)
       }
       if (user) {
-        token.id = user.id
-        token.refCode = user.refCode
-        token.discountCode = user.discountCode
-        token.role = user.role
-        token.tier = user.tier
+        const u: any = user
+        token.id = u.id ?? token.id
+        token.refCode = u.refCode ?? token.refCode
+        token.discountCode = u.discountCode ?? token.discountCode
+        token.role = u.role ?? token.role
+        token.tier = u.tier ?? token.tier
       }
       if (!isProd) console.log('JWT callback - final token:', token)
       return token
