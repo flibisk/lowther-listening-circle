@@ -20,15 +20,49 @@ export default async function KB() {
     redirect('/login')
   }
 
-  // Fetch articles from Google Sheets
+  // Fetch articles directly from Google Sheets (server-side)
   let articles: Article[] = []
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/knowledge-base`, {
-      cache: 'no-store'
-    })
-    if (response.ok) {
-      const data = await response.json()
-      articles = data.articles || []
+    // Import the Google Sheets logic directly instead of making HTTP call
+    const { google } = await import("googleapis")
+    
+    const sheetId = process.env.GOOGLE_SHEETS_ID
+    const apiKey = process.env.GOOGLE_SHEETS_API_KEY
+
+    if (sheetId && apiKey) {
+      const sheets = google.sheets({ version: 'v4', auth: apiKey })
+      
+      // Get the spreadsheet metadata
+      const spreadsheet = await sheets.spreadsheets.get({
+        spreadsheetId: sheetId,
+      })
+      
+      // Get the first sheet name
+      const firstSheet = spreadsheet.data.sheets?.[0]
+      const sheetName = firstSheet?.properties?.title || 'Sheet1'
+
+      // Fetch data from the sheet
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId: sheetId,
+        range: `${sheetName}!A:Z`,
+      })
+
+      const rows = response.data.values
+      if (rows && rows.length > 0) {
+        // Assume first row is headers
+        const headers = rows[0]
+        articles = rows.slice(1).map((row, index) => {
+          const article: any = { id: index + 1 }
+          headers.forEach((header, headerIndex) => {
+            if (row[headerIndex]) {
+              // Convert header to camelCase for easier use
+              const key = header.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+              article[key] = row[headerIndex]
+            }
+          })
+          return article
+        })
+      }
     }
   } catch (error) {
     console.error('Error fetching knowledge base:', error)
