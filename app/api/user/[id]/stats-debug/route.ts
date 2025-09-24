@@ -54,10 +54,10 @@ export async function GET(
       })
     ])
 
-    const totalEarnings = earnings._sum.amount || 0
-    const pendingCommission = pendingEarnings._sum.amount || 0
-    const totalSales = totalSalesResult._sum.subtotalNet || 0
-    const advocateSales = advocateEarnings._sum.subtotalNet || 0
+    const totalEarnings = Number(earnings._sum.amount || 0)
+    const pendingCommission = Number(pendingEarnings._sum.amount || 0)
+    const totalSales = Number(totalSalesResult._sum.subtotalNet || 0)
+    const advocateSales = Number(advocateEarnings._sum.subtotalNet || 0)
     const advocateCommission = advocateSales * 0.05 // 5% commission from advocate sales
 
     console.log('Debug Stats for user', id, ':', { 
