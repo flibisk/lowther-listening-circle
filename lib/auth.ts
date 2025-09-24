@@ -1,4 +1,5 @@
 import NextAuth from "next-auth"
+import type { AuthOptions } from "next-auth"
 import EmailProvider from "next-auth/providers/email"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
@@ -9,7 +10,7 @@ import bcrypt from "bcryptjs"
 const resend = new Resend(process.env.RESEND_API_KEY)
 const isProd = process.env.NODE_ENV === 'production'
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
