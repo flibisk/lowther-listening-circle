@@ -3,8 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { Resend } from "resend"
 
 export async function POST(request: NextRequest) {
+  console.log('🚀 Registration API called')
   try {
     const { email, fullName, address, location, application, ambassadorCode } = await request.json()
+    console.log('📝 Registration data received:', { email, fullName, location })
 
     // Validate required fields (address optional)
     if (!email || !fullName || !location) {
@@ -57,36 +59,25 @@ export async function POST(request: NextRequest) {
     })
 
     // Notify admin of new application (if email configured)
+    console.log('📧 About to send admin notification email')
+    
+    // Simple email test - just send a basic email
     try {
       const resendApiKey = process.env.RESEND_API_KEY
       const emailFrom = process.env.EMAIL_FROM || 'onboarding@resend.dev'
       const adminTo = process.env.ADMIN_NOTIFY_EMAIL || "peter@lowtherloudspeakers.com"
       
-      console.log('Admin notification email config:', {
+      console.log('📧 Email config:', {
         hasResendKey: !!resendApiKey,
         emailFrom,
-        adminTo,
-        resendKeyLength: resendApiKey?.length
+        adminTo
       })
       
       if (resendApiKey && emailFrom && adminTo) {
         const resend = new Resend(resendApiKey)
-        const lines: string[] = []
-        lines.push(`<p><strong>Full Name:</strong> ${fullName}</p>`)
-        lines.push(`<p><strong>Email:</strong> ${email}</p>`)
-        if (location) lines.push(`<p><strong>Location:</strong> ${location}</p>`)
-        if (address) lines.push(`<p><strong>Address:</strong> ${address}</p>`)
-        if (application) {
-          lines.push(`<h3>Application</h3>`)        
-          lines.push(`<pre style="background:#f6f8fa;padding:12px;border-radius:8px;white-space:pre-wrap;">${
-            typeof application === "string" ? application : JSON.stringify(application, null, 2)
-          }</pre>`)
-        }
-        const origin = request.nextUrl.origin
-        const profileUrl = `${origin}/admin/users/${user.id}`
-        lines.push(`<p><a href="${profileUrl}">View applicant in admin</a></p>`)
-
-        console.log('Sending admin notification email to:', adminTo)
+        
+        console.log('📤 Sending admin notification email to:', adminTo)
+        
         const result = await resend.emails.send({
           from: emailFrom,
           to: adminTo,
@@ -94,27 +85,26 @@ export async function POST(request: NextRequest) {
           html: `
             <div style="font-family: Arial, sans-serif; max-width:640px; margin:0 auto; color:#111;">
               <h2>New application received</h2>
-              ${lines.join("\n")}
+              <p><strong>Full Name:</strong> ${fullName}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Location:</strong> ${location}</p>
+              <p><a href="${request.nextUrl.origin}/admin/users/${user.id}">View applicant in admin</a></p>
             </div>
           `
         })
         
-        console.log('Admin notification email result:', result)
+        console.log('✅ Admin notification email result:', result)
         
         if ((result as any)?.error) {
-          console.error('Resend admin email error:', (result as any).error)
+          console.error('❌ Resend admin email error:', (result as any).error)
         } else {
           console.log('✅ Admin notification email sent successfully')
         }
       } else {
-        console.log('⚠️ Admin notification email not sent - missing config:', {
-          resendApiKey: !!resendApiKey,
-          emailFrom: !!emailFrom,
-          adminTo: !!adminTo
-        })
+        console.log('⚠️ Admin notification email not sent - missing config')
       }
     } catch (e) {
-      console.error("Failed to send admin notification email:", e)
+      console.error("❌ Failed to send admin notification email:", e)
     }
 
     return NextResponse.json({
