@@ -9,6 +9,10 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState("")
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetMessage, setResetMessage] = useState("")
   const router = useRouter()
 
   useEffect(() => {
@@ -43,6 +47,36 @@ export default function AdminLogin() {
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setResetLoading(true)
+    setResetMessage("")
+
+    try {
+      const response = await fetch("/api/admin/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: resetEmail }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setResetMessage(data.error || "Failed to send reset email")
+        return
+      }
+
+      setResetMessage("Password reset email sent! Check your inbox.")
+      setShowForgotPassword(false)
+    } catch (error) {
+      setResetMessage("An error occurred. Please try again.")
+    } finally {
+      setResetLoading(false)
     }
   }
 
@@ -100,7 +134,63 @@ export default function AdminLogin() {
                 {isLoading ? "Signing in..." : "Sign In"}
               </button>
             </div>
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-brand-gold hover:text-brand-light text-sm transition-colors"
+              >
+                Forgot Password?
+              </button>
+            </div>
           </form>
+
+          {resetMessage && (
+            <div className={`mt-4 p-3 rounded-xl text-sm text-center ${
+              resetMessage.includes("sent") 
+                ? "bg-green-500/20 border border-green-500/30 text-green-300"
+                : "bg-red-500/20 border border-red-500/30 text-red-300"
+            }`}>
+              {resetMessage}
+            </div>
+          )}
+
+          {showForgotPassword && (
+            <div className="mt-6 p-4 bg-brand-haze/30 rounded-xl border border-brand-gold/20">
+              <h3 className="font-heading text-lg text-brand-light mb-3">Reset Password</h3>
+              <form onSubmit={handleForgotPassword} className="space-y-3">
+                <input
+                  type="email"
+                  placeholder="Enter admin email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 rounded-lg bg-brand-haze/50 border border-brand-gold/30 text-brand-light placeholder-brand-grey2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all duration-300"
+                />
+                <div className="flex space-x-2">
+                  <button
+                    type="submit"
+                    disabled={resetLoading}
+                    className="flex-1 btn-lowther text-sm py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {resetLoading ? "Sending..." : "Send Reset Email"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(false)
+                      setResetMessage("")
+                      setResetEmail("")
+                    }}
+                    className="flex-1 bg-brand-haze/50 text-brand-light border border-brand-gold/30 rounded-lg px-3 py-2 text-sm hover:bg-brand-haze/70 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { TierBadge } from "@/components/TierBadge"
+import { ChangePasswordForm } from "@/components/admin/ChangePasswordForm"
 
 interface User {
   id: string
@@ -452,6 +453,14 @@ export default function AdminDashboard() {
                  </div>
                </div>
              )}
+
+      {/* Admin Settings Section */}
+      <div className="mt-12">
+        <h2 className="font-heading text-2xl mb-6 text-brand-light">Admin Settings</h2>
+        <div className="max-w-md">
+          <ChangePasswordForm />
+        </div>
+      </div>
 
            </section>
          )
