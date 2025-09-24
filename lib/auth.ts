@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import { Resend } from "resend"
-import bcrypt from "bcryptjs"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const isProd = process.env.NODE_ENV === 'production'
