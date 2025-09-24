@@ -81,32 +81,65 @@ export const authOptions: AuthOptions = {
           return null
         }
 
-        // Check if this is admin login
-        const adminEmail = process.env.ADMIN_EMAIL || 'peter@lowtherloudspeakers.com'
-        const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH
-        
-        if (!adminPasswordHash) {
-          console.error('ADMIN_PASSWORD_HASH environment variable not set')
-          return null
-        }
-        
-        if (credentials.email === adminEmail) {
+        // Check if this is an admin user
+        const user = await prisma.user.findUnique({
+          where: { 
+            email: credentials.email,
+            role: 'ADMIN'
+          }
+        })
+
+        if (user && user.passwordHash) {
           // Verify password using bcrypt
-          const isValidPassword = await bcrypt.compare(credentials.password, adminPasswordHash)
+          const isValidPassword = await bcrypt.compare(credentials.password, user.passwordHash)
           
           if (isValidPassword) {
-            if (!isProd) console.log('Admin credentials match, looking up user...')
+            if (!isProd) console.log('Admin credentials match for:', user.email)
             
-            // Find or create admin user
-            let user = await prisma.user.findUnique({
-              where: { email: adminEmail }
+            // Ensure user is properly approved
+            if (!user.isApproved) {
+              await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                  isApproved: true,
+                  approvedAt: new Date(),
+                }
+              })
+            }
+
+            if (!isProd) console.log('Returning admin user:', { id: user.id, email: user.email, role: user.role })
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              refCode: user.refCode,
+              discountCode: user.discountCode,
+              role: user.role,
+              tier: user.tier,
+            }
+          }
+        }
+
+        // Fallback for the original admin account with environment variable
+        const legacyAdminEmail = process.env.ADMIN_EMAIL || 'peter@lowtherloudspeakers.com'
+        const legacyAdminPasswordHash = process.env.ADMIN_PASSWORD_HASH
+        
+        if (credentials.email === legacyAdminEmail && legacyAdminPasswordHash) {
+          const isValidPassword = await bcrypt.compare(credentials.password, legacyAdminPasswordHash)
+          
+          if (isValidPassword) {
+            if (!isProd) console.log('Legacy admin credentials match, looking up user...')
+            
+            // Find or create legacy admin user
+            let legacyUser = await prisma.user.findUnique({
+              where: { email: legacyAdminEmail }
             })
 
-            if (!user) {
-              if (!isProd) console.log('Creating new admin user...')
-              user = await prisma.user.create({
+            if (!legacyUser) {
+              if (!isProd) console.log('Creating new legacy admin user...')
+              legacyUser = await prisma.user.create({
                 data: {
-                  email: adminEmail,
+                  email: legacyAdminEmail,
                   name: 'Admin',
                   role: 'ADMIN',
                   tier: 'AMBASSADOR',
@@ -115,10 +148,10 @@ export const authOptions: AuthOptions = {
                   refCode: 'LW-PETER',
                 }
               })
-            } else if (user.role !== 'ADMIN') {
-              if (!isProd) console.log('Updating user role to ADMIN and approving...')
-              user = await prisma.user.update({
-                where: { id: user.id },
+            } else if (legacyUser.role !== 'ADMIN') {
+              if (!isProd) console.log('Updating legacy user role to ADMIN and approving...')
+              legacyUser = await prisma.user.update({
+                where: { id: legacyUser.id },
                 data: {
                   role: 'ADMIN',
                   tier: 'AMBASSADOR',
@@ -128,15 +161,15 @@ export const authOptions: AuthOptions = {
               })
             }
 
-            if (!isProd) console.log('Returning user:', { id: user.id, email: user.email, role: user.role })
+            if (!isProd) console.log('Returning legacy admin user:', { id: legacyUser.id, email: legacyUser.email, role: legacyUser.role })
             return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              refCode: user.refCode,
-              discountCode: user.discountCode,
-              role: user.role,
-              tier: user.tier,
+              id: legacyUser.id,
+              email: legacyUser.email,
+              name: legacyUser.name,
+              refCode: legacyUser.refCode,
+              discountCode: legacyUser.discountCode,
+              role: legacyUser.role,
+              tier: legacyUser.tier,
             }
           }
         }
