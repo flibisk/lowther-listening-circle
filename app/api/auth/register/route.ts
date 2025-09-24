@@ -61,7 +61,15 @@ export async function POST(request: NextRequest) {
       const resendApiKey = process.env.RESEND_API_KEY
       const emailFrom = process.env.EMAIL_FROM || 'onboarding@resend.dev'
       const adminTo = process.env.ADMIN_NOTIFY_EMAIL || "peter@lowtherloudspeakers.com"
-      if (resendApiKey && emailFrom) {
+      
+      console.log('Admin notification email config:', {
+        hasResendKey: !!resendApiKey,
+        emailFrom,
+        adminTo,
+        resendKeyLength: resendApiKey?.length
+      })
+      
+      if (resendApiKey && emailFrom && adminTo) {
         const resend = new Resend(resendApiKey)
         const lines: string[] = []
         lines.push(`<p><strong>Full Name:</strong> ${fullName}</p>`)
@@ -78,6 +86,7 @@ export async function POST(request: NextRequest) {
         const profileUrl = `${origin}/admin/users/${user.id}`
         lines.push(`<p><a href="${profileUrl}">View applicant in admin</a></p>`)
 
+        console.log('Sending admin notification email to:', adminTo)
         const result = await resend.emails.send({
           from: emailFrom,
           to: adminTo,
@@ -89,9 +98,20 @@ export async function POST(request: NextRequest) {
             </div>
           `
         })
+        
+        console.log('Admin notification email result:', result)
+        
         if ((result as any)?.error) {
           console.error('Resend admin email error:', (result as any).error)
+        } else {
+          console.log('✅ Admin notification email sent successfully')
         }
+      } else {
+        console.log('⚠️ Admin notification email not sent - missing config:', {
+          resendApiKey: !!resendApiKey,
+          emailFrom: !!emailFrom,
+          adminTo: !!adminTo
+        })
       }
     } catch (e) {
       console.error("Failed to send admin notification email:", e)
