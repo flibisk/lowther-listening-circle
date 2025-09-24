@@ -5,7 +5,8 @@ export async function GET() {
   const ref = process.env.VERCEL_GIT_COMMIT_REF || "unknown"
   const repo = process.env.VERCEL_GIT_REPO_SLUG || "unknown"
   const buildAt = new Date().toISOString()
-  return NextResponse.json({ sha, ref, repo, buildAt })
+  const forceRedeploy = "triggering-fresh-deploy"
+  return NextResponse.json({ sha, ref, repo, buildAt, forceRedeploy })
 }
 
 
