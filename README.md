@@ -116,3 +116,4 @@ The system uses PostgreSQL with the following key models:
 - Magic link authentication eliminates password security concerns
 - All sensitive operations require authentication
 - Production logs are minimized for security# Force Vercel redeploy Wed Sep 24 11:49:38 CDT 2025
+# Vercel deployment trigger
