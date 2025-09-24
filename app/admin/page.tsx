@@ -172,46 +172,46 @@ export default function AdminDashboard() {
     }
   }
 
-         const approveUser = async (userId: string) => {
-           try {
-             const response = await fetch(`/api/admin/users/${userId}/approve`, {
-               method: "POST",
-               credentials: 'include'
-             })
-             if (response.ok) {
-               fetchUsers() // Refresh the list
-               setShowApprovalModal(false)
-               setSelectedUser(null)
-             }
-           } catch (error) {
-             console.error("Error approving user:", error)
-           }
-         }
+  const approveUser = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/approve`, {
+        method: "POST",
+        credentials: 'include'
+      })
+      if (response.ok) {
+        fetchUsers() // Refresh the list
+        setShowApprovalModal(false)
+        setSelectedUser(null)
+      }
+    } catch (error) {
+      console.error("Error approving user:", error)
+    }
+  }
 
-         const payCommission = async (userId: string, amount: number) => {
-           try {
-             const response = await fetch(`/api/admin/users/${userId}/pay-commission`, {
-               method: "POST",
-               headers: {
-                 "Content-Type": "application/json"
-               },
-               body: JSON.stringify({ amount }),
-               credentials: 'include'
-             })
-             if (response.ok) {
-               fetchUsers() // Refresh the list
-               setShowPaymentModal(false)
-               setSelectedUser(null)
-               setPaymentAmount("")
-             } else {
-               const errorData = await response.json()
-               alert(`Failed to process payment: ${errorData.error || 'Unknown error'}`)
-             }
-           } catch (error) {
-             console.error("Error processing payment:", error)
-             alert(`Error processing payment: ${error}`)
-           }
-         }
+  const payCommission = async (userId: string, amount: number) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/pay-commission`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ amount }),
+        credentials: 'include'
+      })
+      if (response.ok) {
+        fetchUsers() // Refresh the list
+        setShowPaymentModal(false)
+        setSelectedUser(null)
+        setPaymentAmount("")
+      } else {
+        const errorData = await response.json()
+        alert(`Failed to process payment: ${errorData.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error)
+      alert(`Error processing payment: ${error}`)
+    }
+  }
 
   const deleteUser = async (userId: string) => {
     if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
